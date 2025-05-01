@@ -54,10 +54,6 @@ const router = createBrowserRouter([
         Component: Dashboard,
       },
       {
-        path: "dashboard",
-        Component: Dashboard,
-      },
-      {
         path: "chat",
         Component: ChatManage,
       },
