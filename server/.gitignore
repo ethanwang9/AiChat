@@ -1,0 +1,8 @@
+#IDE
+.idea/
+.vscode/
+
+# cache file
+temp/
+log/
+build/
