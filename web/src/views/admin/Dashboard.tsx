@@ -248,7 +248,6 @@ const Dashboard: FC = () => {
                         }
                         value={2458}
                     />
-                    <div className="text-xs text-green-500 mt-2">↑ 较上月增长 12%</div>
                 </Card>
                 <Card>
                     <Statistic
@@ -260,7 +259,6 @@ const Dashboard: FC = () => {
                         }
                         value={386}
                     />
-                    <div className="text-xs text-green-500 mt-2">↑ 较昨日增长 8%</div>
                 </Card>
                 <Card>
                     <Statistic
@@ -272,7 +270,6 @@ const Dashboard: FC = () => {
                         }
                         value={25789}
                     />
-                    <div className="text-xs text-red-500 mt-2">↓ 较昨日下降 5%</div>
                 </Card>
                 <Card>
                     <Statistic
@@ -284,7 +281,6 @@ const Dashboard: FC = () => {
                         }
                         value={1234567}
                     />
-                    <div className="text-xs text-green-500 mt-2">↑ 较上月增长 ¥12,345</div>
                 </Card>
             </div>
 

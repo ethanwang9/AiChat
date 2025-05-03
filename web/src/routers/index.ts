@@ -12,6 +12,10 @@ import ChatManage from "@/views/admin/ChatManage";
 import ModelManage from "@/views/admin/ModelManage";
 import UserManage from "@/views/admin/UserManage";
 import System from "@/views/admin/System";
+import LogManage from "@/views/admin/LogManage.tsx";
+import AgentManage from "@/views/admin/AgentManage.tsx";
+import NotFound from "@/views/NotFound";
+import AgentChat from "@/views/chat/AgentChat";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +34,12 @@ const router = createBrowserRouter([
       {
         path: "agent",
         Component: Agent,
+        children: [
+          {
+            path: "chat",
+            Component: AgentChat,
+          },
+        ],
       },
       {
         path: "pk",
@@ -54,6 +64,10 @@ const router = createBrowserRouter([
         Component: Dashboard,
       },
       {
+        path: "agent",
+        Component: AgentManage,
+      },
+      {
         path: "chat",
         Component: ChatManage,
       },
@@ -66,10 +80,18 @@ const router = createBrowserRouter([
         Component: UserManage,
       },
       {
+        path: "log",
+        Component: LogManage,
+      },
+      {
         path: "system",
         Component: System,
       },
     ],
+  },
+  {
+    path: "*",
+    Component: NotFound,
   },
 ]);
 

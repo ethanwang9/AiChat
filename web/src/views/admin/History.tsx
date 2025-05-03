@@ -1,41 +1,54 @@
 import {FC} from "react";
 import {Button, Space, Table, TableProps} from "antd";
-import {DeleteOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
 interface DataType {
-    key: string;
-    name: string;
-    time: string;
+    id: string;
+    uid: number;
+    group_id: string;
+    title: string;
+    question: string;
+    answer: string;
+    created_at: string;
 }
 
 const columns: TableProps<DataType>['columns'] = [
     {
-        title: '对话名称',
-        dataIndex: 'name',
-        key: 'name',
+        title: '集合ID',
+        dataIndex: 'group_id',
+        key: 'group_id',
+    },
+    {
+        title: '标题',
+        dataIndex: 'title',
+        key: 'title',
     },
     {
         title: '创建时间',
-        dataIndex: 'time',
-        key: 'time',
+        dataIndex: 'created_at',
+        key: 'created_at',
     },
     {
         title: '操作',
         key: 'action',
-        render: (_, record) => (
-            <Space size="middle">
-                <Button color="primary" variant="text">查看</Button>
-                <Button color="danger" variant="text">删除记录</Button>
+        render: () => (
+            <Space>
+                <Button type="text" icon={<EditOutlined/>}/>
+                <Button type="text" danger icon={<DeleteOutlined/>}/>
             </Space>
         ),
     },
 ];
 
-const data: DataType[] = Array.from({length: 50}).map(() => {
+const data: DataType[] = Array.from({length: 20}).map((_, index) => {
     return {
-        key: '1',
-        name: '今天重庆天气如何',
-        time: "2025-05-01 22:56:31",
+        id: `${index + 1}`,
+        uid: 10001,
+        group_id: `group_${index % 5}`,
+        title: '今天重庆天气如何',
+        question: '今天重庆天气如何？',
+        answer: '今天重庆天气晴朗，温度适宜，非常适合外出活动。',
+        created_at: "2025-05-01 22:56:31",
     }
 })
 

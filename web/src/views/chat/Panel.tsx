@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import {Layout, List, Popover} from "antd";
+import {Layout, List, Popover, Modal, QRCode} from "antd";
 import {Outlet, useLocation, useNavigate} from "react-router";
 import Avatar from "@/assets/avatar/1.jpg";
 import {
@@ -10,6 +10,7 @@ import {
     UserOutlined,
     WechatOutlined
 } from "@ant-design/icons";
+import IconWechat from "@/assets/icon/wechat.svg"
 
 const {Content, Sider} = Layout;
 
@@ -18,6 +19,7 @@ const ChatPanel: FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [navName, setNavName] = useState("")
+    const [loginModalOpen, setLoginModalOpen] = useState(false);
 
     // 监听默认地址
     useEffect(() => {
@@ -25,7 +27,11 @@ const ChatPanel: FC = () => {
             navigate("/service/chat");
         }
         const navArr = location.pathname.split("/")
-        setNavName(navArr[navArr.length - 1])
+        if (navArr[navArr.length - 1] === "chat" && navArr[navArr.length - 2] === "agent") {
+            setNavName("agent")
+        } else {
+            setNavName(navArr[navArr.length - 1])
+        }
     }, [location.pathname, navigate]);
 
     // 跳转到后台用户信息界面
@@ -36,6 +42,16 @@ const ChatPanel: FC = () => {
     // 退出用户登陆
     const logout = () => {
 
+    }
+
+    // 打开登录弹窗
+    const showLoginModal = () => {
+        setLoginModalOpen(true);
+    }
+
+    // 关闭登录弹窗
+    const closeLoginModal = () => {
+        setLoginModalOpen(false);
     }
 
     return (
@@ -73,8 +89,8 @@ const ChatPanel: FC = () => {
                     <div className="rounded-full overflow-hidden w-10 h-10">
                         <Popover placement="right" trigger="click" content={
                             <List>
-                                <List.Item className="mx-4">
-                                    <WechatOutlined />
+                                <List.Item className="mx-4 cursor-pointer" onClick={showLoginModal}>
+                                    <WechatOutlined/>
                                     <span className="pl-2">登陆账号</span>
                                 </List.Item>
                                 <List.Item className="mx-4" onClick={() => goPage("/admin/userinfo")}>
@@ -95,6 +111,27 @@ const ChatPanel: FC = () => {
             <Content>
                 <Outlet/>
             </Content>
+
+            {/* 微信登录弹窗 */}
+            <Modal
+                className="!w-80"
+                open={loginModalOpen}
+                onCancel={closeLoginModal}
+                footer={null}
+                centered
+            >
+                <div className="flex flex-col items-center py-10">
+                    <QRCode
+                        className="shadow-md"
+                        icon={IconWechat}
+                        iconSize={{width: 45, height: 45}}
+                        errorLevel="M"
+                        value="https://www.baidu.com/s/oP02jaPJklaq"
+                        size={180}
+                    />
+                    <p className="text-gray-700 mt-6">微信扫一扫即可登录</p>
+                </div>
+            </Modal>
         </Layout>
     );
 };

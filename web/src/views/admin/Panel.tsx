@@ -2,12 +2,12 @@ import {FC, useEffect, useState} from "react";
 import {Button, Divider, Layout, Menu, MenuProps,} from "antd";
 import {Outlet, useLocation, useNavigate} from "react-router";
 import {
-    AliwangwangOutlined,
-    ContactsOutlined, DatabaseOutlined,
+    AliwangwangOutlined, ArrowLeftOutlined,
+    ContactsOutlined, ControlOutlined, DatabaseOutlined,
     FileSearchOutlined,
     LogoutOutlined,
     PieChartOutlined,
-    RedditOutlined,
+    RedditOutlined, RobotOutlined,
     UserOutlined,
 } from "@ant-design/icons";
 
@@ -43,6 +43,11 @@ const AdminPanel: FC = () => {
     // 导航菜单
     const items: MenuItem[] = [
         {
+            key: "/service/chat",
+            label: "返回对话",
+            icon: <ArrowLeftOutlined />,
+        },
+        {
             key: 'personal',
             label: '个人信息',
             type: 'group',
@@ -57,10 +62,12 @@ const AdminPanel: FC = () => {
             type: 'group',
             children: [
                 {key: 'dashboard', label: '仪表盘', icon: <PieChartOutlined/>},
+                {key: 'agent', label: '智能体', icon: <RedditOutlined/>},
                 {key: 'chat', label: '对话管理', icon: <AliwangwangOutlined/>},
-                {key: 'model', label: '模型管理', icon: <RedditOutlined/>},
+                {key: 'model', label: '模型管理', icon: <RobotOutlined/>},
                 {key: 'user', label: '用户管理', icon: <ContactsOutlined/>},
-                {key: 'system', label: '系统设置', icon: <DatabaseOutlined/>},
+                {key: 'log', label: '日志管理', icon: <DatabaseOutlined/>},
+                {key: 'system', label: '系统设置', icon: <ControlOutlined/>},
             ],
         },
     ];
@@ -78,7 +85,7 @@ const AdminPanel: FC = () => {
                         </div>
                         {/*菜单*/}
                         <Menu
-                            className="w-[calc(260px-32px)]"
+                            className="w-[calc(260px-32px)] !border-e-0"
                             mode="vertical"
                             items={items}
                             selectedKeys={[navName]}
