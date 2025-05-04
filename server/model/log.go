@@ -1,10 +1,18 @@
 package model
 
 type Log struct {
-	ID      string `gorm:"primaryKey;size:30"`
-	Operate string `gorm:"size:20"`
+	ID      string `gorm:"primaryKey"`
+	Operate string
 	Uid     int64
-	Job     string `gorm:"size:50"`
-	Content string `gorm:"size:100"`
+	Job     string
+	Content string
 	Base
+}
+
+// LogApp 实例化
+var LogApp = new(Log)
+
+// New 初始化
+func (d *Log) New(s Log) *Log {
+	return &s
 }

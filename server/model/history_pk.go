@@ -1,16 +1,20 @@
 package model
 
-import "gorm.io/gorm"
-
 type HistoryPk struct {
-	ID        string `gorm:"primaryKey;size:32"`
-	Uid       int64
-	Mid1      int
-	Mid2      int
-	Question  string `gorm:"size:200"`
-	Answer    string `gorm:"size:1000"`
-	Answer2   string `gorm:"size:1000"`
-	CreatedAt gorm.DeletedAt
-	UpdatedAt gorm.DeletedAt
-	DeletedAt gorm.DeletedAt
+	ID       string `gorm:"primaryKey"`
+	Uid      int64
+	Mid1     int
+	Mid2     int
+	Question string
+	Answer   string
+	Answer2  string
+	Base
+}
+
+// HistoryPkApp 实例化
+var HistoryPkApp = new(HistoryPk)
+
+// New 初始化
+func (d *HistoryPk) New(s HistoryPk) *HistoryPk {
+	return &s
 }

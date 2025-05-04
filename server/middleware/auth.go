@@ -21,8 +21,9 @@ func AuthVerify() gin.HandlerFunc {
 
 		// 判断不需要登录的路由
 		path := []string{
-			"^/temp/.+",
-			"^/auth/.+",
+			"^/v1/temp/.+",
+			"^/v1/auth/.+",
+			"^/v1/home/.+",
 		}
 		for i := range path {
 			re := regexp.MustCompile(path[i])

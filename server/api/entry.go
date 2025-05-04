@@ -1,7 +1,10 @@
 package api
 
+import "server/api/auth"
+
 type Api struct {
+	auth.GMYa
 }
 
-// ApiApplication 接口实例
-var ApiApplication = new(Api)
+// Application 接口实例
+var Application = new(Api)

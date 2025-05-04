@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import {createBrowserRouter} from "react-router";
 import Home from "@/views/Home";
 import ChatPanel from "@/views/chat/Panel";
 import Chat from "@/views/chat/Chat";
@@ -17,82 +17,87 @@ import AgentManage from "@/views/admin/AgentManage.tsx";
 import NotFound from "@/views/NotFound";
 import AgentChat from "@/views/chat/AgentChat";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    Component: Home,
-  },
-  {
-    path: "service",
-    Component: ChatPanel,
-    // loader: () => redirect("/service/chat"),
-    children: [
-      {
-        path: "chat",
-        Component: Chat,
-      },
-      {
-        path: "agent",
-        Component: Agent,
-        children: [
-          {
-            path: "chat",
-            Component: AgentChat,
-          },
-        ],
-      },
-      {
-        path: "pk",
-        Component: PK,
-      },
+const router = createBrowserRouter(
+    // 路由
+    [
+        {
+            path: "/",
+            Component: Home,
+        },
+        {
+            path: "service",
+            Component: ChatPanel,
+            // loader: () => redirect("/service/chat"),
+            children: [
+                {
+                    path: "chat",
+                    Component: Chat,
+                },
+                {
+                    path: "agent",
+                    Component: Agent,
+                    children: [
+                        {
+                            path: "chat",
+                            Component: AgentChat,
+                        },
+                    ],
+                },
+                {
+                    path: "pk",
+                    Component: PK,
+                },
+            ],
+        },
+        {
+            path: "admin",
+            Component: AdminPanel,
+            children: [
+                {
+                    path: "userinfo",
+                    Component: Userinfo,
+                },
+                {
+                    path: "history",
+                    Component: History,
+                },
+                {
+                    path: "dashboard",
+                    Component: Dashboard,
+                },
+                {
+                    path: "agent",
+                    Component: AgentManage,
+                },
+                {
+                    path: "chat",
+                    Component: ChatManage,
+                },
+                {
+                    path: "model",
+                    Component: ModelManage,
+                },
+                {
+                    path: "user",
+                    Component: UserManage,
+                },
+                {
+                    path: "log",
+                    Component: LogManage,
+                },
+                {
+                    path: "system",
+                    Component: System,
+                },
+            ],
+        },
+        {
+            path: "*",
+            Component: NotFound,
+        },
     ],
-  },
-  {
-    path: "admin",
-    Component: AdminPanel,
-    children: [
-      {
-        path: "userinfo",
-        Component: Userinfo,
-      },
-      {
-        path: "history",
-        Component: History,
-      },
-      {
-        path: "dashboard",
-        Component: Dashboard,
-      },
-      {
-        path: "agent",
-        Component: AgentManage,
-      },
-      {
-        path: "chat",
-        Component: ChatManage,
-      },
-      {
-        path: "model",
-        Component: ModelManage,
-      },
-      {
-        path: "user",
-        Component: UserManage,
-      },
-      {
-        path: "log",
-        Component: LogManage,
-      },
-      {
-        path: "system",
-        Component: System,
-      },
-    ],
-  },
-  {
-    path: "*",
-    Component: NotFound,
-  },
-]);
+    // 拦截
+
+);
 
 export default router;

@@ -1,10 +1,18 @@
 package model
 
 type HistoryAgent struct {
-	ID       string `gorm:"primaryKey;size:32"`
+	ID       string `gorm:"primaryKey"`
 	Uid      int64
 	Aid      int
-	Question string `gorm:"size:200"`
-	Answer   string `gorm:"size:1000"`
+	Question string
+	Answer   string
 	Base
+}
+
+// HistoryAgentApp 实例化
+var HistoryAgentApp = new(HistoryAgent)
+
+// New 初始化
+func (d *HistoryAgent) New(s HistoryAgent) *HistoryAgent {
+	return &s
 }

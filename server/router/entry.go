@@ -30,6 +30,7 @@ func Init() *gin.Engine {
 	// 路由
 	r := router.Group("/v1")
 	{
+		internal.Auth(r, "/auth")
 		internal.Home(r, "/home")
 		internal.Chat(r, "/chat")
 		internal.Admin(r, "/admin")

@@ -1,10 +1,18 @@
 package model
 
 type Channel struct {
-	ID    int     `gorm:"primaryKey;autoIncrement"`
-	Name  string  `gorm:"size:20"`
-	URL   string  `gorm:"size:100"`
-	Key   string  `gorm:"size:50"`
+	ID    int `gorm:"primaryKey;autoIncrement"`
+	Name  string
+	URL   string
+	Key   string
 	Money float64 `gorm:"type:decimal(10,2)"`
 	Base
+}
+
+// ChannelApp 实例化
+var ChannelApp = new(Channel)
+
+// New 初始化
+func (d *Channel) New(s Channel) *Channel {
+	return &s
 }

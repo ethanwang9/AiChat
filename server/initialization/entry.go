@@ -11,6 +11,7 @@ func AppInit() {
 	// 初始化服务
 	global.APP_LOG = service.Zap()
 	global.APP_DB = service.Gorm()
+	global.APP_REDIS = service.Redis()
 
 	// 初始化数据库
 	internal.GormInit()

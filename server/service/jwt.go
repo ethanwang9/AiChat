@@ -14,10 +14,10 @@ type jwtToken struct{}
 var JwtToken = new(jwtToken)
 
 // Generate 生成
-func (t jwtToken) Generate(userID string) (securityToken string, err error) {
+func (t jwtToken) Generate(issuer string, expiresAt time.Time) (securityToken string, err error) {
 	claims := &jwt.RegisteredClaims{
-		Issuer:    userID,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(6 * time.Hour)),
+		Issuer:    issuer,
+		ExpiresAt: jwt.NewNumericDate(expiresAt),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	securityToken, err = token.SignedString([]byte(global.SysSecurity))

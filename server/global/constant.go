@@ -10,6 +10,8 @@ const (
 	SysMode = "debug"
 	// SysSecurity 安全密钥
 	SysSecurity = "D01E97139E60494C98AE48548B67C33C"
+	// SysDomain 系统域名
+	SysDomain = "http://127.0.0.1:8888"
 )
 
 // 状态码
@@ -30,12 +32,15 @@ const (
 // 数据库
 
 const (
-	DBHost     = "127.0.0.1"
-	DBPort     = 3306
-	DBUser     = "root"
-	DBPassword = "root"
-	DBName     = "ai"
-	DBPrefix   = "ai_"
+	DBHost      = "127.0.0.1"
+	DBPort      = 3306
+	DBUser      = "root"
+	DBPassword  = "root"
+	DBName      = "ai"
+	DBPrefix    = "ai_"
+	RDBAddress  = "127.0.0.1:6379"
+	RDBPassword = "root"
+	RDBDB       = 0
 )
 
 // 日志
@@ -58,7 +63,7 @@ const (
 	LogEncodeLevel = "CapitalLevelEncoder"
 	// LogLevel 日志级别
 	// debug | info | warn | error | dpanic | panic | fatal
-	LogLevel = "info"
+	LogLevel = "debug"
 )
 
 // 日志类型
