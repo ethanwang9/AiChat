@@ -5,9 +5,10 @@ import {DeleteOutlined} from "@ant-design/icons";
 interface DataType {
     id: string;
     operate: string;
-    uid: string;
+    uid: number;
     job: string;
     content: string;
+    createTime: string;
 }
 
 const columns: TableProps<DataType>['columns'] = [
@@ -37,6 +38,11 @@ const columns: TableProps<DataType>['columns'] = [
         key: 'content',
     },
     {
+        title: '创建时间',
+        dataIndex: 'createTime',
+        key: 'createTime',
+    },
+    {
         title: '操作',
         key: 'action',
         render: () => (
@@ -47,15 +53,24 @@ const columns: TableProps<DataType>['columns'] = [
     },
 ];
 
-const data: DataType[] = Array.from({length: 50}).map((_, index) => {
-    return {
-        id: `LOG${index + 1000}`,
-        operate: '查询',
-        uid: `USER${index + 100}`,
-        job: '对话任务',
-        content: '今天重庆天气如何',
+const data: DataType[] = [
+    {
+        id: "adbc15911ab944979bb1eb6e56d1bba2",
+        operate: "用户操作",
+        uid: 1,
+        job: "系统设置",
+        content: "修改系统配置信息",
+        createTime: "2025-05-01 14:32:08"
+    },
+    {
+        id: "c908f0465a284ed088a73b8280a62abe",
+        operate: "系统任务",
+        uid: 0,
+        job: "创建用户",
+        content: "自动绑定用户微信OpenID，权限为管理员",
+        createTime: "2025-05-01 14:30:00"
     }
-})
+]
 
 const LogManage: FC = () => {
     return (
@@ -69,7 +84,7 @@ const LogManage: FC = () => {
                     position: ["bottomCenter"],
                     current: 1,
                     pageSize: 10,
-                    total: 100,
+                    total: 1,
                     hideOnSinglePage: true,
                     showSizeChanger: false,
                 }}

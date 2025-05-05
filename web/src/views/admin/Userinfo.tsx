@@ -12,7 +12,7 @@ import {
 const Userinfo: FC = () => {
     const [userInfo] = useState({
         name: "陈思远",
-        mail: "siyuan.chen@example.com",
+        mail: "siyuan.chen@google.com",
         phone: "138****5678",
         avatar: "/src/assets/avatar/1.jpg"
     });

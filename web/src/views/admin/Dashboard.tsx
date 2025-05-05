@@ -14,30 +14,14 @@ const {RangePicker} = DatePicker;
 const Dashboard: FC = () => {
     // 对话趋势数据
     const chatData = [
-        {date: "2023-01", value: 120},
-        {date: "2023-02", value: 150},
-        {date: "2023-03", value: 180},
-        {date: "2023-04", value: 150},
-        {date: "2023-05", value: 180},
-        {date: "2023-06", value: 230},
-        {date: "2023-07", value: 210},
-        {date: "2023-08", value: 250},
-        {date: "2023-09", value: 280},
-        {date: "2023-10", value: 270},
+        {date: "2025-04", value: 10},
+        {date: "2025-05", value: 5},
     ];
 
     // Token趋势数据
     const tokenData = [
-        {date: "2023-01", value: 12000},
-        {date: "2023-02", value: 15000},
-        {date: "2023-03", value: 18000},
-        {date: "2023-04", value: 15000},
-        {date: "2023-05", value: 18000},
-        {date: "2023-06", value: 23000},
-        {date: "2023-07", value: 21000},
-        {date: "2023-08", value: 25000},
-        {date: "2023-09", value: 28000},
-        {date: "2023-10", value: 27000},
+        {date: "2025-04", value: 6223},
+        {date: "2025-05", value: 2068},
     ];
 
     // 图表引用
@@ -246,7 +230,7 @@ const Dashboard: FC = () => {
                                 <MehTwoTone/>
                             </Flex>
                         }
-                        value={2458}
+                        value={1}
                     />
                 </Card>
                 <Card>
@@ -257,7 +241,7 @@ const Dashboard: FC = () => {
                                 <FileTextTwoTone/>
                             </Flex>
                         }
-                        value={386}
+                        value={1}
                     />
                 </Card>
                 <Card>
@@ -268,7 +252,7 @@ const Dashboard: FC = () => {
                                 <ThunderboltTwoTone/>
                             </Flex>
                         }
-                        value={25789}
+                        value={421}
                     />
                 </Card>
                 <Card>
@@ -279,7 +263,7 @@ const Dashboard: FC = () => {
                                 <BookTwoTone/>
                             </Flex>
                         }
-                        value={1234567}
+                        value={8291}
                     />
                 </Card>
             </div>

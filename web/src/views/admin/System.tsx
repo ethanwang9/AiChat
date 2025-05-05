@@ -102,14 +102,6 @@ const System: FC = () => {
                 </TabPane>
 
                 <TabPane tab="登录配置" key="oauth">
-                    <Alert
-                        message="聚合登录配置说明"
-                        description="请使用彩虹聚合登录系统OAuth接口，否则将无法使用第三方社交平台登录账号使用系统！"
-                        type="info"
-                        showIcon
-                        closable
-                        className="!mb-4"
-                    />
                     <Form
                         form={loginForm}
                         layout="vertical"

@@ -36,43 +36,11 @@ const ModelManage: FC = () => {
     const vendorData: VendorData[] = [
         {
             id: 1,
-            name: "OpenAI",
-            url: "https://api.openai.com/v1",
-            key: "sk-************************",
-            money: 1000.50,
-            created_at: "2024-03-15 14:30",
-        },
-        {
-            id: 2,
-            name: "Anthropic",
-            url: "https://api.anthropic.com/v1",
-            key: "sk-************************",
-            money: 2500.75,
-            created_at: "2024-03-15 14:30",
-        },
-        {
-            id: 3,
-            name: "Google",
-            url: "https://api.google.com/v1",
-            key: "sk-************************",
-            money: 3000.00,
-            created_at: "2024-03-15 14:30",
-        },
-        {
-            id: 4,
-            name: "Microsoft",
-            url: "https://api.microsoft.com/v1",
-            key: "sk-************************",
-            money: 1500.25,
-            created_at: "2024-03-15 14:30",
-        },
-        {
-            id: 5,
-            name: "Meta",
-            url: "https://api.meta.com/v1",
-            key: "sk-************************",
-            money: 2000.00,
-            created_at: "2024-03-15 14:30",
+            name: "DeepSeek",
+            url: "https://api.deepseek.com/v1",
+            key: "sk-fb68cd937b19423280005f36c69e32ec",
+            money: 20.00,
+            created_at: "2025-05-01 22:25:39",
         },
     ];
 
@@ -81,11 +49,11 @@ const ModelManage: FC = () => {
         {
             id: 1,
             cid: 1,
-            name: "GPT-4",
-            category: ["深度思考", "对话"],
-            status: "stop",
-            created_at: "2024-03-15 14:30",
-            channel_name: "OpenAI",
+            name: "deepseek-chat",
+            category: ["对话"],
+            status: "use",
+            created_at: "2025-05-01 22:25:39",
+            channel_name: "DeepSeek",
         },
         {
             id: 2,
@@ -251,7 +219,7 @@ const ModelManage: FC = () => {
                                 position: ["bottomCenter"],
                                 current: 1,
                                 pageSize: 10,
-                                total: 100,
+                                total: 1,
                                 hideOnSinglePage: true,
                                 showSizeChanger: false,
                             }}
@@ -269,7 +237,7 @@ const ModelManage: FC = () => {
                                 position: ["bottomCenter"],
                                 current: 1,
                                 pageSize: 10,
-                                total: 100,
+                                total: 1,
                                 hideOnSinglePage: true,
                                 showSizeChanger: false,
                             }}

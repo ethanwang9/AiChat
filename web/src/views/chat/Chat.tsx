@@ -11,7 +11,7 @@ const Chat: FC = () => {
     // 历史对话记录
     const items: GetProp<ConversationsProps, 'items'> = Array.from({length: 1}).map((_, index) => ({
         key: `item${index + 1}`,
-        label: `今天重庆天气怎么样！`,
+        label: `hi，你是谁？`,
     }));
 
     // 加载状态
@@ -40,19 +40,19 @@ const Chat: FC = () => {
             <div className="flex flex-col gap-4 flex-auto h-full box-border p-4 bg-gray-100">
                 {/*标题*/}
                 <div className="flex items-center w-full h-[60px]">
-                    <p className="text-lg">今天重庆天气怎么样！</p>
+                    <p className="text-lg">hi，你是谁？</p>
                 </div>
                 {/*对话气泡*/}
                 <div className="flex-auto overflow-y-auto">
                     <Flex gap="middle" vertical>
                         <Bubble
                             placement="end"
-                            content="今天重庆天气怎么样！"
+                            content="hi，你是谁？"
                             avatar={<img className="w-8 h-8" src="/src/assets/avatar/1.jpg"/>}
                         />
                         <Bubble
                             placement="start"
-                            content="根据墨迹天气的信息，重庆今天（5 月 1 日）的天气是多云，最低温度 19℃，最高温度 31℃，空气质量良，pm2.5 指数 40，湿度 41，东南风 2 级。"
+                            content="Hi！我是DeepSeek Chat，你的智能AI助手，由深度求索公司打造。😊 我可以帮你解答问题、提供建议、陪你聊天，甚至帮你处理各种文本和文件。有什么我可以帮你的吗？"
                             avatar={<img className="w-8 h-8" src="/logo.svg"/>}
                         />
                     </Flex>

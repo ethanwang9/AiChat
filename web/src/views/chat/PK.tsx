@@ -49,12 +49,12 @@ const PK: FC = () => {
                         <Flex gap="middle" vertical>
                             <Bubble
                                 placement="end"
-                                content="今天重庆天气怎么样！"
+                                content="hi，你是谁？"
                                 avatar={<img className="w-8 h-8" src="/src/assets/avatar/1.jpg" alt="头像"/>}
                             />
                             <Bubble
                                 placement="start"
-                                content="根据墨迹天气的信息，重庆今天（5 月 1 日）的天气是多云，最低温度 19℃，最高温度 31℃，空气质量良，pm2.5 指数 40，湿度 41，东南风 2 级。"
+                                content="Hi！我是DeepSeek Chat，你的智能AI助手，由深度求索公司打造~ 😊 我可以帮你解答问题、聊天、提供各种信息或建议。有什么想聊的，或者需要帮忙的吗？"
                                 avatar={<img className="w-8 h-8" src="/logo.svg" alt="头像"/>}
                             />
                         </Flex>
@@ -66,7 +66,7 @@ const PK: FC = () => {
                             className="font-bold flex gap-4 pb-2"
                             onClick={(e) => e.preventDefault()}
                         >
-                            <p>DeepSeek-V3</p>
+                            <p>Doubao-1.5-pro</p>
                             <DownOutlined/>
                         </a>
                     </Dropdown>
@@ -74,12 +74,12 @@ const PK: FC = () => {
                         <Flex gap="middle" vertical>
                             <Bubble
                                 placement="end"
-                                content="今天重庆天气怎么样！"
+                                content="hi，你是谁？"
                                 avatar={<img className="w-8 h-8" src="/src/assets/avatar/1.jpg" alt="头像"/>}
                             />
                             <Bubble
                                 placement="start"
-                                content="根据墨迹天气的信息，重庆今天（5 月 1 日）的天气是多云，最低温度 19℃，最高温度 31℃，空气质量良，pm2.5 指数 40，湿度 41，东南风 2 级。"
+                                content="你好，我是豆包，很高兴能和你交流！"
                                 avatar={<img className="w-8 h-8" src="/logo.svg" alt="头像"/>}
                             />
                         </Flex>

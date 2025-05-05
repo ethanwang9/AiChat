@@ -6,7 +6,6 @@ const { TabPane } = Tabs;
 
 // 对话 Tab 接口
 interface ChatDataType {
-    key: string;
     id: string;
     uid: number;
     group_id: string;
@@ -185,54 +184,13 @@ const pkColumns: TableProps<PKDataType>['columns'] = [
 // 示例数据 - 对话
 const chatData: ChatDataType[] = [
     {
-        key: '1',
-        id: 'CHAT_000001',
-        uid: 324,
-        group_id: 'GROUP_001',
-        title: '代码质量讨论',
-        question: '如何提高代码质量?',
-        answer: '建议采用代码审查和自动化测试...',
-        created_at: '2024-03-15 14:30',
-    },
-    {
-        key: '2',
-        id: 'CHAT_000002',
-        uid: 749,
-        group_id: 'GROUP_002',
-        title: '代码质量讨论',
-        question: '如何提高代码质量?',
-        answer: '建议采用代码审查和自动化测试...',
-        created_at: '2024-03-15 14:30',
-    },
-    {
-        key: '3',
-        id: 'CHAT_000003',
-        uid: 74,
-        group_id: 'GROUP_003',
-        title: '代码质量讨论',
-        question: '如何提高代码质量?',
-        answer: '建议采用代码审查和自动化测试...',
-        created_at: '2024-03-15 14:30',
-    },
-    {
-        key: '4',
-        id: 'CHAT_000004',
-        uid: 999,
-        group_id: 'GROUP_004',
-        title: '代码质量讨论',
-        question: '如何提高代码质量?',
-        answer: '建议采用代码审查和自动化测试...',
-        created_at: '2024-03-15 14:30',
-    },
-    {
-        key: '5',
-        id: 'CHAT_000005',
-        uid: 937,
-        group_id: 'GROUP_005',
-        title: '代码质量讨论',
-        question: '如何提高代码质量?',
-        answer: '建议采用代码审查和自动化测试...',
-        created_at: '2024-03-15 14:30',
+        id: '40b88cd3f64b4fe8b47d369af765b044',
+        uid: 1,
+        group_id: '5c392dfe9c464d0a9c1cd8d4868fa865',
+        title: 'hi，你是谁？',
+        question: 'hi，你是谁？',
+        answer: 'Hi！我是DeepSeek Chat，你的智能AI助手，由深度求索公司打造。😊 我可以帮你解答问题、提供建议、陪你聊天，甚至帮你处理各种文本和文件。有什么我可以帮你的吗？',
+        created_at: '2025-05-05 17:07:49',
     },
 ];
 
@@ -358,7 +316,7 @@ const ChatManage: FC = () => {
                             position: ["bottomCenter"],
                             current: 1,
                             pageSize: 10,
-                            total: 100,
+                            total: 1,
                             hideOnSinglePage: true,
                             showSizeChanger: false,
                         }}

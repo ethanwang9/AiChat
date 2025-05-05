@@ -19,20 +19,54 @@ const Agent: FC = () => {
 
     // 卡片列表
     const card = (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
             <Card>
                 <div className="flex gap-4">
                     <img
                         className="h-20 w-20"
-                        src="/src/assets/avatar/1.jpg"
+                        src="/src/assets/avatar/2.png"
                         alt="Agent"
                     />
                     <div>
                         <p className="mb-2 line-clamp-1 text-base font-bold">
-                            市场分析专家
+                        爆炸标题党
                         </p>
                         <p className="line-clamp-2 text-sm">
-                            专注于市场趋势分析，助您把握商业机遇专注于市场趋势分析，助您把握商业机遇专注于市场趋势分析，助您把握商业机遇
+                        Boooom！炸裂的标题诞生！
+                        </p>
+                    </div>
+                </div>
+            </Card>
+            <Card>
+                <div className="flex gap-4">
+                    <img
+                        className="h-20 w-20"
+                        src="/src/assets/avatar/3.png"
+                        alt="Agent"
+                    />
+                    <div>
+                        <p className="mb-2 line-clamp-1 text-base font-bold">
+                        AI编码助手
+                        </p>
+                        <p className="line-clamp-2 text-sm">
+                        你好，我是你的 AI 编码助手，我能帮你写代码、写注释、写单元测试，帮你读代码、排查代码问题等。快来考考我吧！
+                        </p>
+                    </div>
+                </div>
+            </Card>
+            <Card>
+                <div className="flex gap-4">
+                    <img
+                        className="h-20 w-20"
+                        src="/src/assets/avatar/4.png"
+                        alt="Agent"
+                    />
+                    <div>
+                        <p className="mb-2 line-clamp-1 text-base font-bold">
+                        小红书文案大师
+                        </p>
+                        <p className="line-clamp-2 text-sm">
+                        精通小红书爆款文案创作
                         </p>
                     </div>
                 </div>
@@ -60,7 +94,7 @@ const Agent: FC = () => {
                             <TabPane tab="全部" key="1">
                                 {card}
                             </TabPane>
-                            <TabPane tab="数据分析" key="2">
+                            <TabPane tab="文本编辑" key="2">
                                 {card}
                             </TabPane>
                             <TabPane tab="编程开发" key="3">

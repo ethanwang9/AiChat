@@ -6,7 +6,7 @@ type HistoryPk struct {
 	Mid1     int
 	Mid2     int
 	Question string
-	Answer   string
+	Answer1  string
 	Answer2  string
 	Base
 }
