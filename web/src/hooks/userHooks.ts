@@ -1,5 +1,5 @@
 import {useAppDispatch, useAppSelector} from '@/hooks/reduxHooks';
-import {login, logout, setUsername, setAvatar, UserState} from '@/stores/userSlice';
+import {logout, setAvatar, setToken, setRole} from '@/stores/userSlice';
 
 export const useUserStore = () => {
     const user = useAppSelector((state) => state.user);
@@ -8,8 +8,8 @@ export const useUserStore = () => {
     return {
         user,
         setAvatar: (avatar: string) => dispatch(setAvatar(avatar)),
-        setUsername: (username: string) => dispatch(setUsername(username)),
-        login: (data: UserState) => dispatch(login({...data})),
+        setRole: (role: string) => dispatch(setRole(role)),
+        setToken: (token: string) => dispatch(setToken(token)),
         logout: () => dispatch(logout()),
     };
 };

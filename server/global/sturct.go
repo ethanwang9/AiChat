@@ -15,5 +15,6 @@ type RedisAuthMessage struct {
 	Openid string    `json:"openid"`
 	Status bool      `json:"status"`
 	Role   string    `json:"role"`
+	Avatar string    `json:"avatar"`
 	Time   time.Time `json:"time"`
 }

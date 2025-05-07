@@ -38,7 +38,12 @@ func gormInitRecords() {
 	// system是否有记录id=1，如果没有自动创建
 	systemRecord, _ := model.SystemApp.New(model.System{}).Get()
 	if len(systemRecord.Name) == 0 {
-		if err := model.SystemApp.New(model.System{ID: 1, Name: "DinoPals"}).Set(); err != nil {
+		if err := model.SystemApp.New(model.System{
+			ID:   1,
+			Name: "DinoPals",
+			Gov:  "渝公网安备50010302000814号",
+			Icp:  "渝ICP备2025053725号-1",
+		}).Set(); err != nil {
 			global.APP_LOG.Warn("[初始化] 初始化数据库表System失败", zap.Error(err))
 		}
 	}

@@ -140,6 +140,7 @@ func GetAuthBack(ctx *gin.Context) {
 		UID:    bind.Uid,
 		Role:   user.Role,
 		Openid: bind.Wechat,
+		Avatar: user.Avatar,
 		Time:   time.Now(),
 	}
 	rdbValueString, _ := json.Marshal(rdbValue)
@@ -196,6 +197,8 @@ func GetAuthCheck(ctx *gin.Context) {
 		Data: gin.H{
 			"status": data.Status,
 			"token":  token,
+			"avatar": data.Avatar,
+			"role":   data.Role,
 		},
 	})
 }

@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import {Button, Divider, Layout, Menu, MenuProps,} from "antd";
+import {Button, Divider, Layout, Menu, MenuProps, message} from "antd";
 import {Outlet, useLocation, useNavigate} from "react-router";
 import {
     AliwangwangOutlined, ArrowLeftOutlined,
@@ -10,7 +10,8 @@ import {
     RedditOutlined, RobotOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-
+import { useUserStore } from "@/hooks/userHooks";
+import {useMount} from "ahooks";
 const {Content, Sider} = Layout;
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -20,15 +21,28 @@ const AdminPanel: FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [navName, setNavName] = useState("")
+    const userStore = useUserStore();
 
-    // 监听默认地址
+    // 监听菜单栏变化
     useEffect(() => {
+        const navArr = location.pathname.split("/");
+        if (navArr.length === 3) {
+            setNavName(navArr[navArr.length - 1]);
+        }
+    }, [location.pathname]);
+
+    // 生命周期 - 挂载
+    useMount(()=>{
+        // 路由跳转
         if (location.pathname === "/admin") {
             navigate("/admin/userinfo");
         }
-        const navArr = location.pathname.split("/")
-        setNavName(navArr[navArr.length - 1])
-    }, [location.pathname, navigate]);
+        // 监听用户是否登录
+        if (userStore.user.token.trim().length <= 0) {
+            navigate("/service/chat")
+            message.error("未登录账号，无法访问该页面")
+        }
+    })
 
     // 跳转页面
     const goPage = (url: string) => {
@@ -37,7 +51,8 @@ const AdminPanel: FC = () => {
 
     // 退出用户登陆
     const logout = () => {
-
+        userStore.logout();
+        navigate("/");
     }
 
     // 导航菜单

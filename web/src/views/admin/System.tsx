@@ -1,5 +1,5 @@
 import {FC, useState} from "react";
-import {Tabs, Input, Button, Upload, message, Form, Alert} from "antd";
+import {Tabs, Input, Button, Upload, message, Form} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 
 const {TabPane} = Tabs;

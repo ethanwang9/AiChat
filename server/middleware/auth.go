@@ -45,6 +45,10 @@ func AuthVerify() gin.HandlerFunc {
 			return
 		}
 
+		// 获取用户权限等级
+
+		// 判断用户管理员身份路由
+
 		ctx.Next()
 	}
 }

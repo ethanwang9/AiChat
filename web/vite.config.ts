@@ -16,7 +16,7 @@ export default defineConfig({
         port: 8080,
         proxy: {
             "/api/v1": {
-                target: "localhost:8888",
+                target: "http://localhost:8888",
                 changeOrigin: true,
                 rewrite: path => path.replace(new RegExp('^' + "/api/v1"), '/v1'),
             },
