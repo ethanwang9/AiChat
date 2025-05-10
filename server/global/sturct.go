@@ -18,3 +18,9 @@ type RedisAuthMessage struct {
 	Avatar string    `json:"avatar"`
 	Time   time.Time `json:"time"`
 }
+
+// ChatHistory 对话结构体
+type ChatHistory struct {
+	Role    string `json:"role"`
+	Content string `json:"content"`
+}

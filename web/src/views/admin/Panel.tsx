@@ -70,8 +70,12 @@ const AdminPanel: FC = () => {
                 {key: 'userinfo', label: '用户信息', icon: <UserOutlined/>},
                 {key: 'history', label: '历史对话记录', icon: <FileSearchOutlined/>},
             ],
-        },
-        {
+        }
+    ];
+
+    // 判断管理员导航
+    if(userStore.user.role === "admin") {
+        items.push({
             key: 'system',
             label: '系统管理',
             type: 'group',
@@ -84,8 +88,8 @@ const AdminPanel: FC = () => {
                 {key: 'log', label: '日志管理', icon: <DatabaseOutlined/>},
                 {key: 'system', label: '系统设置', icon: <ControlOutlined/>},
             ],
-        },
-    ];
+        })
+    }
 
     return (
         <Layout hasSider>

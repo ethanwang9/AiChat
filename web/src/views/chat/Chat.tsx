@@ -1,12 +1,43 @@
 import {FC, useEffect, useState} from "react";
 import {PlusOutlined} from "@ant-design/icons";
-import {Button, Divider, Flex, GetProp, Select, Switch} from "antd";
-import {Bubble, Conversations, ConversationsProps, Sender} from "@ant-design/x";
+import {Button, Divider, Flex, GetProp, message, Select, Switch, Typography} from "antd";
+import {Bubble, Conversations, ConversationsProps, Sender, XRequest} from "@ant-design/x";
+import {useMount} from "ahooks";
+
+const streamRequest = XRequest({
+    baseURL: "/api/v1/chat/chat",
+    fetch: async (baseURL, data) => {
+        const body = Object.entries(JSON.parse(data?.body as string) as string).map(([key, value]) => {
+            if (key === "history") {
+                return `${key}=${JSON.stringify(value)}`;
+            } else {
+                return `${key}=${value}`
+            }
+        }).join("&")
+        const token = JSON.parse(localStorage.getItem("user") as string)?.token || "";
+        return await fetch(baseURL, {
+            method: 'post',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: body,
+        })
+    },
+});
+
+interface RequestParams {
+    channel: number;
+    model: string;
+    history: Array<Record<string, string>>;
+}
 
 const Chat: FC = () => {
     // 初始化
-    const [loading, setLoading] = useState<boolean>(false);
-    const [value, setValue] = useState<string>('');
+    const [inputStatus, setInputStatus] = useState<boolean>(false)
+    const [inputLoading, setInputLoading] = useState<boolean>(false)
+    const [inputValue, setInputValue] = useState<string>("")
+    const [streamValue, setStreamValue] = useState<string>("")
 
     // 历史对话记录
     const items: GetProp<ConversationsProps, 'items'> = Array.from({length: 1}).map((_, index) => ({
@@ -14,19 +45,57 @@ const Chat: FC = () => {
         label: `hi，你是谁？`,
     }));
 
+    // 发起对话请求
+    useMount(() =>
+        streamRequest.create<RequestParams>(
+            {
+                channel: 1,
+                model: "DeepSeek-V3",
+                history: [
+                    {
+                        "role": "user",
+                        "content": "生成一道高中数学几何题并尝试解答",
+                    }
+                ],
+            },
+            {
+                onSuccess: (msg) => {
+                    console.log('onSuccess', msg);
+                },
+                onError: (error) => {
+                    console.error('onError', error);
+                },
+                onUpdate: (msg) => {
+                    // console.log('onUpdate', msg);
+                    if (msg.code != undefined && msg.code === 301) {
+                        // 处理错误
+                        message.error({
+                            content: msg.message
+                        })
+                    } else {
+                        // 处理返回消息
+                        const {content} = JSON.parse(msg.data)
+                        setStreamValue(value => value + content)
+                    }
+                },
+            },
+        )
+    )
+
+
     // 加载状态
     useEffect(() => {
-        if (loading) {
+        if (inputLoading) {
             const timer = setTimeout(() => {
-                setLoading(false);
-                setValue('');
+                setInputLoading(false);
+                setInputStatus('');
                 console.log('Send message successfully!');
-            }, 2000);
+            }, 200000);
             return () => {
                 clearTimeout(timer);
             };
         }
-    }, [loading]);
+    }, [inputLoading]);
 
 
     return (
@@ -37,7 +106,7 @@ const Chat: FC = () => {
                     <Conversations className="w-full" items={items} defaultActiveKey="item1"/>
                 </div>
             </div>
-            <div className="flex flex-col gap-4 flex-auto h-full box-border p-4 bg-gray-100">
+            <div className="flex flex-col gap-4 flex-1 h-full box-border p-4 bg-gray-100">
                 {/*标题*/}
                 <div className="flex items-center w-full h-[60px]">
                     <p className="text-lg">hi，你是谁？</p>
@@ -52,8 +121,9 @@ const Chat: FC = () => {
                         />
                         <Bubble
                             placement="start"
-                            content="Hi！我是DeepSeek Chat，你的智能AI助手，由深度求索公司打造。😊 我可以帮你解答问题、提供建议、陪你聊天，甚至帮你处理各种文本和文件。有什么我可以帮你的吗？"
+                            content={streamValue}
                             avatar={<img className="w-8 h-8" src="/logo.svg"/>}
+                            typing={{ step: 2, interval: 50 }}
                         />
                     </Flex>
                 </div>
@@ -61,8 +131,9 @@ const Chat: FC = () => {
                 <div>
                     <Sender
                         className="bg-white"
-                        value={value}
-                        onChange={setValue}
+                        value={inputValue}
+                        onChange={setInputValue}
+                        disabled={inputStatus}
                         autoSize={{minRows: 3, maxRows: 15}}
                         placeholder="有任何问题都可以向小恐龙提问"
                         footer={({components}) => {
@@ -84,7 +155,7 @@ const Chat: FC = () => {
                                     <Flex align="center">
                                         <SpeechButton/>
                                         <Divider type="vertical"/>
-                                        {loading ? (
+                                        {inputLoading ? (
                                             <LoadingButton type="default"/>
                                         ) : (
                                             <SendButton type="primary" disabled={false}/>
@@ -94,10 +165,10 @@ const Chat: FC = () => {
                             );
                         }}
                         onSubmit={() => {
-                            setLoading(true);
+                            setInputLoading(true);
                         }}
                         onCancel={() => {
-                            setLoading(false);
+                            setInputLoading(false);
                         }}
                         actions={false}
                     />

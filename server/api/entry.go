@@ -1,9 +1,13 @@
 package api
 
-import "server/api/auth"
+import (
+	"server/api/auth"
+	"server/api/bigModel"
+)
 
 type Api struct {
 	auth.GMYa
+	bigModel.OpenAI
 }
 
 // Application 接口实例

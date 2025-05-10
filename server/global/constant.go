@@ -78,14 +78,3 @@ const (
 // 文件夹目录
 
 const ()
-
-// 模型角色
-
-const (
-	// ModelRoleUser 用户
-	ModelRoleUser = "user"
-	// ModelRoleSystem 系统
-	ModelRoleSystem = "system"
-	// ModelRoleAssistant AI
-	ModelRoleAssistant = "assistant"
-)

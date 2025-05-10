@@ -32,7 +32,7 @@ const ChatPanel: FC = () => {
     const userStore = useUserStore();
 
     // 获取登录链接
-    const {run: fetchLoginLink, loading: loginLinkLoading} = useRequest(() => GetAuthLogin(), {
+    const {run: fetchLoginLink, loading: loginLinkLoading} = useRequest(GetAuthLogin, {
         manual: true,
         debounceWait: 800,
         onSuccess: (data: any) => {
@@ -53,10 +53,13 @@ const ChatPanel: FC = () => {
                 userStore.setRole(data.role);
                 userStore.setToken(data.token);
                 userStore.setAvatar(data.avatar)
+                // 清除轮询
                 if (loginCheckRef.current) {
                     clearInterval(loginCheckRef.current);
                     loginCheckRef.current = null;
                 }
+                // 清除qr
+                setQr("")
                 // 关闭弹窗
                 setLoginModalOpen(false);
             }
@@ -115,6 +118,8 @@ const ChatPanel: FC = () => {
             clearInterval(loginCheckRef.current);
             loginCheckRef.current = null;
         }
+        // 清楚qr
+        setQr("");
         setLoginModalOpen(false);
     };
 

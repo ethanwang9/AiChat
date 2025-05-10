@@ -134,6 +134,15 @@ func GetAuthBack(ctx *gin.Context) {
 		return
 	}
 
+	// 判断用户是否能够登录
+	if user.Status != "use" {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusiness,
+			Message: "账号状态异常，请联系管理员解决",
+		})
+		return
+	}
+
 	// 写入缓存数据库
 	rdbValue := global.RedisAuthMessage{
 		Status: true,
