@@ -1,36 +1,10 @@
 import {FC, useEffect, useState} from "react";
 import {PlusOutlined} from "@ant-design/icons";
-import {Button, Divider, Flex, GetProp, message, Select, Switch, Typography} from "antd";
-import {Bubble, Conversations, ConversationsProps, Sender, XRequest} from "@ant-design/x";
+import {Button, Divider, Flex, GetProp, Select, Switch, Typography} from "antd";
+import {Bubble, Conversations, ConversationsProps, Sender} from "@ant-design/x";
 import {useMount} from "ahooks";
-
-const streamRequest = XRequest({
-    baseURL: "/api/v1/chat/chat",
-    fetch: async (baseURL, data) => {
-        const body = Object.entries(JSON.parse(data?.body as string) as string).map(([key, value]) => {
-            if (key === "history") {
-                return `${key}=${JSON.stringify(value)}`;
-            } else {
-                return `${key}=${value}`
-            }
-        }).join("&")
-        const token = JSON.parse(localStorage.getItem("user") as string)?.token || "";
-        return await fetch(baseURL, {
-            method: 'post',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: body,
-        })
-    },
-});
-
-interface RequestParams {
-    channel: number;
-    model: string;
-    history: Array<Record<string, string>>;
-}
+import { createChatRequest } from "@/utils/sse";
+import { ChatRequestParams } from "@/types/http/chat";
 
 const Chat: FC = () => {
     // 初始化
@@ -46,49 +20,37 @@ const Chat: FC = () => {
     }));
 
     // 发起对话请求
-    useMount(() =>
-        streamRequest.create<RequestParams>(
-            {
-                channel: 1,
-                model: "DeepSeek-V3",
-                history: [
-                    {
-                        "role": "user",
-                        "content": "生成一道高中数学几何题并尝试解答",
-                    }
-                ],
-            },
-            {
-                onSuccess: (msg) => {
-                    console.log('onSuccess', msg);
-                },
-                onError: (error) => {
-                    console.error('onError', error);
-                },
-                onUpdate: (msg) => {
-                    // console.log('onUpdate', msg);
-                    if (msg.code != undefined && msg.code === 301) {
-                        // 处理错误
-                        message.error({
-                            content: msg.message
-                        })
-                    } else {
-                        // 处理返回消息
-                        const {content} = JSON.parse(msg.data)
-                        setStreamValue(value => value + content)
-                    }
-                },
-            },
-        )
-    )
+    useMount(() => {
+        const chatParams: ChatRequestParams = {
+            channel: 1,
+            model: "DeepSeek-V3",
+            history: [
+                {
+                    "role": "user",
+                    "content": "你是谁？",
+                }
+            ],
+        };
 
+        createChatRequest(chatParams, {
+            onSuccess: (msg) => {
+                console.log('onSuccess', msg);
+            },
+            onError: (error) => {
+                console.error('onError', error);
+            },
+            onUpdate: (content) => {
+                setStreamValue(value => value + content);
+            }
+        });
+    });
 
     // 加载状态
     useEffect(() => {
         if (inputLoading) {
             const timer = setTimeout(() => {
                 setInputLoading(false);
-                setInputStatus('');
+                setInputStatus(false);
                 console.log('Send message successfully!');
             }, 200000);
             return () => {
