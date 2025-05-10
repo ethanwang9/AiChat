@@ -1,15 +1,14 @@
-import {FC, useState, useEffect} from "react";
-import {Button, message, Spin} from "antd";
+import {FC, useState} from "react";
+import {Button} from "antd";
 import {
     UserOutlined,
     MailOutlined,
     PhoneOutlined,
-    WechatOutlined,
     FileImageOutlined, DeleteOutlined
 } from "@ant-design/icons";
 import {GetAdminUserinfo} from "@/apis/admin";
 import {HTTPAdminUserinfo} from "@/types/http/admin";
-import {useMount, useRequest} from "ahooks";
+import {useRequest} from "ahooks";
 import Visitors from "@/assets/icon/visitors.svg"
 
 

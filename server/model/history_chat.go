@@ -60,3 +60,41 @@ func (d *HistoryChat) GetID() (data []HistoryChat, err error) {
 	}
 	return
 }
+
+// GetLimit 获取分页
+func (d *HistoryChat) GetLimit(limit int, offset int) (data []HistoryChat, err error) {
+	subQuery := global.APP_DB.Model(&HistoryChat{}).
+		Select("group_id, MAX(created_at) as max_time").
+		Where("uid = ?", d.Uid).
+		Group("group_id")
+
+	if err = global.APP_DB.Model(&HistoryChat{}).
+		Joins("JOIN (?) t2 ON ai_history_chat.group_id = t2.group_id AND ai_history_chat.created_at = t2.max_time", subQuery).
+		Where("uid = ?", d.Uid).
+		Order("created_at DESC").
+		Limit(limit).
+		Offset((offset - 1) * limit).
+		Find(&data).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#获取分页数据失败", zap.Error(err))
+		return
+	}
+	return
+}
+
+// GetLimitTotal 获取分页总数
+func (d *HistoryChat) GetLimitTotal() (data []HistoryChat, err error) {
+	subQuery := global.APP_DB.Model(&HistoryChat{}).
+		Select("group_id, MAX(created_at) as max_time").
+		Where("uid = ?", d.Uid).
+		Group("group_id")
+
+	if err = global.APP_DB.Model(&HistoryChat{}).
+		Joins("JOIN (?) t2 ON ai_history_chat.group_id = t2.group_id AND ai_history_chat.created_at = t2.max_time", subQuery).
+		Where("uid = ?", d.Uid).
+		Order("created_at DESC").
+		Find(&data).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#获取分页总数失败", zap.Error(err))
+		return
+	}
+	return
+}

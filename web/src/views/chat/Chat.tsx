@@ -1,16 +1,14 @@
-import {FC, useState, useRef, useEffect} from "react";
+import {FC, useState, useRef} from "react";
 import {PlusOutlined} from "@ant-design/icons";
 import {Button, Divider, Flex, GetProp, message, Select} from "antd";
 import {Bubble, BubbleProps, Conversations, ConversationsProps, Sender} from "@ant-design/x";
 import {useMount, useRequest} from "ahooks";
 import {streamRequest, SSEResponse} from "@/utils/sse.ts";
-import {ChatRequestParams, HTTPChatHistoryList, HttpModelList} from "@/types/http/chat.ts";
+import {ChatRequestParams, HttpModelList} from "@/types/http/chat.ts";
 import AIResponse from "@/components/chat/AIResponse";
 import MarkdownRenderer from "@/components/chat/MarkdownRenderer";
 import {GetChatHistory, GetChatHistoryList, GetModelList, PostChatHistory} from "@/apis/chat.ts";
 import {v4 as uuidv4} from 'uuid';
-import {GetAuthCheck} from "@/apis/auth.ts";
-import {useUserStore} from "@/hooks/userHooks.ts";
 
 const renderMarkdown: BubbleProps['messageRender'] = (content) => {
     return <MarkdownRenderer content={content}/>;
@@ -25,13 +23,6 @@ interface ChatMessage {
 }
 
 // 定义历史记录项类型
-interface HistoryItem {
-    key: string;
-    label: string;
-    group_id: string;
-    title: string;
-}
-
 const Chat: FC = () => {
     // Sender组件状态
     const [inputStatus, setInputStatus] = useState<boolean>(false);
@@ -176,7 +167,7 @@ const Chat: FC = () => {
         streamRequest.create<ChatRequestParams>(
             params,
             {
-                onSuccess: (msg) => {
+                onSuccess: () => {
                     // 请求成功完成，更新AI消息的状态
                     setChatHistory(prev => {
                         const updated = [...prev];
@@ -211,7 +202,7 @@ const Chat: FC = () => {
                     setInputStatus(false);
                     setIsReceivingResponse(false);
                 },
-                onError: (error) => {
+                onError: () => {
                     // 移除占位AI消息
                     setChatHistory(prev => prev.filter(msg => !msg.isStreaming));
 

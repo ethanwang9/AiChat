@@ -94,6 +94,7 @@ func AuthVerify() gin.HandlerFunc {
 		userPath := []string{
 			"^/v1/chat/.+",
 			"^/v1/admin/userinfo",
+			"^/v1/admin/history",
 		}
 		for i := range userPath {
 			re := regexp.MustCompile(userPath[i])
@@ -101,25 +102,25 @@ func AuthVerify() gin.HandlerFunc {
 				ctx.Next()
 				return
 			}
-
-			// 判断管理员身份路由
-			adminPath := []string{
-				"^/v1/admin/.+",
-			}
-			for i := range path {
-				re := regexp.MustCompile(adminPath[i])
-				if re.MatchString(ctx.Request.URL.Path) && userinfo.Role != "admin" {
-					ctx.JSON(http.StatusOK, global.MsgBack{
-						Code:    global.StatusErrorBusiness,
-						Message: "权限不足",
-						Data:    nil,
-					})
-					ctx.Abort()
-					return
-				}
-			}
-
-			ctx.Next()
 		}
+
+		// 判断管理员身份路由
+		adminPath := []string{
+			"^/v1/admin/.+",
+		}
+		for i := range path {
+			re := regexp.MustCompile(adminPath[i])
+			if re.MatchString(ctx.Request.URL.Path) && userinfo.Role != "admin" {
+				ctx.JSON(http.StatusOK, global.MsgBack{
+					Code:    global.StatusErrorBusiness,
+					Message: "权限不足",
+					Data:    nil,
+				})
+				ctx.Abort()
+				return
+			}
+		}
+
+		ctx.Next()
 	}
 }

@@ -1,19 +1,23 @@
 package admin
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"net/http"
 	"server/global"
 	"server/model"
 	"server/service"
-
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
+	"strconv"
 )
 
-func GetAdminUserinfo(ctx *gin.Context) {
+func GetAdminHistory(ctx *gin.Context) {
+	// 获取参数
+	limit := ctx.Query("limit")
+	offset := ctx.Query("offset")
+
 	// 获取token
 	tokenString := ctx.GetHeader("Authorization")[7:]
 	token, _ := service.JwtToken.Decode(tokenString)
@@ -38,12 +42,24 @@ func GetAdminUserinfo(ctx *gin.Context) {
 	var result global.RedisAuthMessage
 	_ = json.Unmarshal([]byte(cacheInfo), &result)
 
-	// 获取用户信息
-	userinfo, err := model.UserApp.New(model.User{Uid: result.UID}).Get()
+	// 获取历史记录
+	limitN, _ := strconv.Atoi(limit)
+	offsetN, _ := strconv.Atoi(offset)
+	data, err := model.HistoryChatApp.New(model.HistoryChat{Uid: result.UID}).GetLimit(limitN, offsetN)
 	if err != nil {
 		ctx.JSON(http.StatusOK, global.MsgBack{
 			Code:    global.StatusErrorSQL,
-			Message: "获取用户信息失败，请再次重试！",
+			Message: "获取数据失败",
+		})
+		return
+	}
+
+	// 获取总数
+	total, err := model.HistoryChatApp.New(model.HistoryChat{Uid: result.UID}).GetLimitTotal()
+	if err != nil {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorSQL,
+			Message: "获取数据失败",
 		})
 		return
 	}
@@ -53,11 +69,8 @@ func GetAdminUserinfo(ctx *gin.Context) {
 		Code:    global.StatusSuccess,
 		Message: "success",
 		Data: gin.H{
-			"uid":    userinfo.Uid,
-			"name":   userinfo.Name,
-			"mail":   userinfo.Mail,
-			"phone":  userinfo.Phone,
-			"avatar": userinfo.Avatar,
+			"history": data,
+			"total":   len(total),
 		},
 	})
 }
