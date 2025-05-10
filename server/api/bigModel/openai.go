@@ -34,7 +34,6 @@ func (a *OpenAI) ChatStream(message []openai.ChatCompletionMessage, temperature 
 		Messages:    message,
 		Stream:      true,
 		Temperature: temperature,
-		MaxTokens:   200,
 	}
 
 	// 构建请求

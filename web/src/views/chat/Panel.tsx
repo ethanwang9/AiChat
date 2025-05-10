@@ -62,6 +62,8 @@ const ChatPanel: FC = () => {
                 setQr("")
                 // 关闭弹窗
                 setLoginModalOpen(false);
+                // 刷新页面
+                window.location.reload()
             }
         },
     });

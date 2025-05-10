@@ -41,3 +41,12 @@ func (d *Model) GetCidAndNickname() (data Model, err error) {
 	}
 	return
 }
+
+// All 获取全部数据
+func (d *Model) All() (data []Model, err error) {
+	if err = global.APP_DB.Model(&d).Find(&data).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 模型表#获取全部数据失败", zap.Error(err))
+		return
+	}
+	return
+}

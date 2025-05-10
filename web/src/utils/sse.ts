@@ -1,6 +1,4 @@
-import { ChatRequestParams } from "@/types/http/chat";
 import { XRequest } from "@ant-design/x";
-import { message } from "antd";
 
 // 定义SSE响应类型
 export interface SSEResponse {
@@ -27,7 +25,7 @@ export const streamRequest = XRequest({
         return `${key}=${value}`
       }
     }).join("&")
-    const token = JSON.parse(localStorage.getItem("user") as string)?.token + "1" || "";
+    const token = JSON.parse(localStorage.getItem("user") as string)?.token || "";
     return await fetch(baseURL, {
       method: 'post',
       headers: {
@@ -38,27 +36,3 @@ export const streamRequest = XRequest({
     })
   },
 });
-
-// 创建聊天请求函数
-export const createChatRequest = (params: ChatRequestParams, callbacks: SSECallbacks) => {
-  return streamRequest.create<ChatRequestParams>(
-    params,
-    {
-      onSuccess: callbacks.onSuccess,
-      onError: callbacks.onError,
-      onUpdate: (msg: any) => {
-        // 处理返回的消息
-        if (msg.code !== undefined && msg.code === 301) {
-          // 处理错误
-          message.error({
-            content: msg.message
-          });
-        } else if (msg.data) {
-          // 处理返回消息
-          const { content } = JSON.parse(msg.data);
-          callbacks.onUpdate?.(content);
-        }
-      },
-    },
-  );
-}; 

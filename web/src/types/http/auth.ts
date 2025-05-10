@@ -9,4 +9,3 @@ export interface HttpAuthCheck {
     token: string
     avatar: string
 }
-

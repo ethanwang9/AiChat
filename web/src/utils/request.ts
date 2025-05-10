@@ -36,8 +36,8 @@ request.interceptors.response.use(function (response) {
         // 提示用户
         msg.error({
             content: '身份令牌校验失败',
-            onClose: () => window.location.href = "/"
         });
+
         return Promise.reject(message);
     }
 

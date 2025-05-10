@@ -30,3 +30,12 @@ func (d *Channel) Get() (data Channel, err error) {
 	}
 	return
 }
+
+// All 获取全部通道
+func (d *Channel) All() (data []Channel, err error) {
+	if err = global.APP_DB.Model(&d).Find(&data).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 模型通道表#获取全部数据失败", zap.Error(err))
+		return
+	}
+	return
+}

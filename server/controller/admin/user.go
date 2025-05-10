@@ -16,7 +16,14 @@ import (
 func GetAdminUserinfo(ctx *gin.Context) {
 	// 获取token
 	tokenString := ctx.GetHeader("Authorization")[7:]
-	token, _ := service.JwtToken.Decode(tokenString)
+	token, err := service.JwtToken.Decode(tokenString)
+	if err != nil {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusiness,
+			Message: err.Error(),
+		})
+		return
+	}
 	state, _ := token.GetIssuer()
 
 	// 获取缓存信息
