@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"server/api"
@@ -198,6 +199,15 @@ func GetAuthCheck(ctx *gin.Context) {
 			return
 		}
 	}
+
+	// 记录日志
+	_ = model.LogApp.New(model.Log{
+		Operate: "权限认证",
+		Uid:     data.UID,
+		Job:     "登录账号",
+		Content: fmt.Sprintf("用户在IP地址（%s）登录", ctx.ClientIP()),
+		Base:    model.Base{},
+	}).Set()
 
 	// 返回token
 	ctx.JSON(http.StatusOK, global.MsgBack{

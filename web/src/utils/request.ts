@@ -5,7 +5,6 @@ import { UserState } from "@/stores/userSlice";
 
 const request = axios.create({
     baseURL: "/api/v1",
-    timeout: 1000 * 60,
 })
 
 // 请求拦截 - 发送前
@@ -28,6 +27,8 @@ request.interceptors.response.use(function (response) {
     // 判断返回接口状态码
     const { code, message } = response.data as HTTPBack<any> || undefined
 
+    // console.log(response);
+
     // 1. auth 返回错误
     if (code === 301) {
         // 清除用户令牌
@@ -37,6 +38,11 @@ request.interceptors.response.use(function (response) {
         msg.error({
             content: '身份令牌校验失败',
         });
+
+        // 当地址是/admin开头则跳转到/
+        if (window.location.pathname.startsWith("/admin")) {
+            window.location.href = "/";
+        }
 
         return Promise.reject(message);
     }

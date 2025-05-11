@@ -9,6 +9,7 @@ import AIResponse from "@/components/chat/AIResponse";
 import MarkdownRenderer from "@/components/chat/MarkdownRenderer";
 import {GetChatHistory, GetChatHistoryList, GetModelList, PostChatHistory} from "@/apis/chat.ts";
 import {v4 as uuidv4} from 'uuid';
+import {useUserStore} from "@/hooks/userHooks.ts";
 
 const renderMarkdown: BubbleProps['messageRender'] = (content) => {
     return <MarkdownRenderer content={content}/>;
@@ -40,12 +41,15 @@ const Chat: FC = () => {
     const [historyItems, setHistoryItems] = useState<GetProp<ConversationsProps, 'items'>>([]);
 
     // 当前正在流式响应的内容
-    const [streamThink, setStreamThink] = useState<string>("");
-    const [streamContent, setStreamContent] = useState<string>("");
+    const [, setStreamThink] = useState<string>("");
+    const [, setStreamContent] = useState<string>("");
     const [isReceivingResponse, setIsReceivingResponse] = useState<boolean>(false);
 
     // Sender组件引用
     const senderRef = useRef<any>(null);
+
+    // 获取用户信息
+    const userStore = useUserStore()
 
     // 获取模型列表
     const {run: fetchModelList} = useRequest(GetModelList, {
@@ -151,21 +155,13 @@ const Chat: FC = () => {
         const chatParams: ChatRequestParams = {
             channel: 1, // 使用当前选择的模型通道
             model: modelType, // 直接使用选择的模型名称
-            history: [...chatHistory, newUserMessage].map(msg => ({
-                role: msg.role,
-                content: msg.content
-            }))
-        };
-
-        // 添加groupId参数
-        const params = {
-            ...chatParams,
-            groupId: currentGroupId,
+            question: userMessage,
+            gid: currentGroupId,
         };
 
         // 发送请求
         streamRequest.create<ChatRequestParams>(
-            params,
+            chatParams,
             {
                 onSuccess: () => {
                     // 请求成功完成，更新AI消息的状态
@@ -282,29 +278,29 @@ const Chat: FC = () => {
         <div className="flex h-screen w-full overflow-hidden">
             <div className="w-[300px] h-full bg-white box-border p-4">
                 <Button icon={<PlusOutlined/>} type="primary" className="w-full"
-                    onClick={() => {
-                        // 清空当前对话，开始新的对话
-                        setChatHistory([]);
-                        setStreamThink("");
-                        setStreamContent("");
-                        setCurrentTitle("新的对话");
-                        setInputValue("");
-                        setIsReceivingResponse(false);
-                        // 创建新的groupId而不是重置为空字符串
-                        const newGroupId = uuidv4().replace(/-/g, '');
-                        setGroupId(newGroupId);
-                        if (senderRef.current) {
-                            senderRef.current.focus();
-                        }
-                    }}
+                        onClick={() => {
+                            // 清空当前对话，开始新的对话
+                            setChatHistory([]);
+                            setStreamThink("");
+                            setStreamContent("");
+                            setCurrentTitle("新的对话");
+                            setInputValue("");
+                            setIsReceivingResponse(false);
+                            // 创建新的groupId而不是重置为空字符串
+                            const newGroupId = uuidv4().replace(/-/g, '');
+                            setGroupId(newGroupId);
+                            if (senderRef.current) {
+                                senderRef.current.focus();
+                            }
+                        }}
                 >
                     新建对话
                 </Button>
                 <div className="w-full h-[calc(100vh-32px-16px-16px)] overflow-y-auto">
-                    <Conversations 
-                        className="w-full" 
-                        items={historyItems} 
-                        activeKey={groupId} 
+                    <Conversations
+                        className="w-full"
+                        items={historyItems}
+                        activeKey={groupId}
                         defaultActiveKey={groupId || undefined}
                         onActiveChange={(key: string) => loadConversation(key)}
                     />
@@ -325,7 +321,7 @@ const Chat: FC = () => {
                                     key={`msg-${index}`}
                                     placement="end"
                                     content={msg.content}
-                                    avatar={<img className="w-8 h-8" src="/src/assets/avatar/1.jpg"/>}
+                                    avatar={<img className="w-8 h-8 rounded-2xl" src={userStore.user.avatar} />}
                                     messageRender={renderMarkdown}
                                 />
                             ) : (
@@ -338,7 +334,7 @@ const Chat: FC = () => {
                                             content={msg.content}
                                         />
                                     }
-                                    avatar={<img className="w-8 h-8" src="/logo.svg"/>}
+                                    avatar={<img className="w-8 h-8 rounded-2xl" src="/logo.svg"/>}
                                 />
                             )
                         ))}

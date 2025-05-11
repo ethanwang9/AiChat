@@ -8,6 +8,9 @@ import (
 func Chat(group *gin.RouterGroup, path string) {
 	r := group.Group(path)
 	{
+		// ===
+		// 对话
+		// ===
 		// 获取模型对话内容
 		r.POST("/chat", chat.GetChatChat)
 		// 获取模型列表
@@ -18,6 +21,12 @@ func Chat(group *gin.RouterGroup, path string) {
 		r.GET("/history", chat.GetChatHistory)
 		// 获取指定历史记录
 		r.GET("/history/:id", chat.GetChatHistoryByID)
+
+		// ===
+		// 擂台
+		// ===
+		// 上报擂台对话记录
+		r.POST("/pk/history", chat.PostChatPKHistory)
 
 	}
 }

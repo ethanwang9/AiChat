@@ -24,9 +24,10 @@ func GetChatChat(ctx *gin.Context) {
 	// 获取请求参数
 	channel := ctx.PostForm("channel")
 	modelName := ctx.PostForm("model")
-	chatHistory := ctx.PostForm("history")
+	question := ctx.PostForm("question")
+	gid := ctx.PostForm("gid")
 
-	if len(channel) == 0 || len(modelName) == 0 || len(chatHistory) == 0 {
+	if len(channel) == 0 || len(modelName) == 0 || len(question) == 0 || len(gid) == 0 {
 		ctx.JSON(http.StatusOK, global.MsgBack{
 			Code:    global.StatusErrorBusiness,
 			Message: "请求参数无效",
@@ -78,36 +79,44 @@ func GetChatChat(ctx *gin.Context) {
 	}
 
 	// 构建对话请求
-	var history []global.ChatHistory
-	err = json.Unmarshal([]byte(chatHistory), &history)
-	if err != nil {
-		ctx.JSON(http.StatusOK, global.MsgBack{
-			Code:    global.StatusErrorSys,
-			Message: "解析历史对话记录失败，请再次重试！",
-		})
-	}
 	historyList := make([]openai.ChatCompletionMessage, 0)
 	historyList = append(historyList, openai.ChatCompletionMessage{
 		Role: openai.ChatMessageRoleSystem,
 		Content: "你是一名由小橙子工作室提供技术服务的AI智能助手，你中文名叫【小恐龙】，英文名叫【DinoPals】。" +
-			"现在你需要帮助用户解答疑惑，当用户的问题涉嫌违规时你只需要告诉用户【违规内容，暂不提供服务！】，并告诉用户哪里违规了。" +
-			"如果用户询问日常生活内容，回答请活泼一些；如果用户询问专业知识，回答风格请专业一些；如果用户回答比较消极，请像温柔的小天使一样鼓励用户；如果用户回答引战，回答用户风格语气请模仿贴吧老哥一样毫不留情、一针见血、充满讽刺意味、充满灰色幽默！",
+			"如果用户询问日常生活内容，回答请活泼一些；如果用户询问专业知识，回答风格请专业一些；如果用户回答比较消极，请像温柔的小天使一样鼓励用户；如果用户回答引战，回答用户风格语气请模仿贴吧老哥一样毫不留情、一针见血、充满讽刺意味、充满灰色幽默！" +
+			"现在你需要有一定的记忆能力，如果用户发送的问题具有一定关联度，你需要解决上下文回答用户的问题。",
 	})
+
+	// 加载历史记录
+	history, err := model.HistoryChatApp.New(model.HistoryChat{
+		Uid:     result.UID,
+		GroupID: gid,
+	}).GetID()
+	if err != nil {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorSQL,
+			Message: "获取对话失败",
+		})
+		return
+	}
 	for _, v := range history {
-		var role string
-		switch v.Role {
-		case openai.ChatMessageRoleSystem:
-			role = openai.ChatMessageRoleSystem
-		case openai.ChatMessageRoleUser:
-			role = openai.ChatMessageRoleUser
-		case openai.ChatMessageRoleAssistant:
-			role = openai.ChatMessageRoleAssistant
-		}
 		historyList = append(historyList, openai.ChatCompletionMessage{
-			Role:    role,
-			Content: v.Content,
+			Role:    openai.ChatMessageRoleUser,
+			Content: v.Question,
+		})
+		historyList = append(historyList, openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleAssistant,
+			Content: v.Answer,
 		})
 	}
+
+	// 写入用户问题
+	historyList = append(historyList, openai.ChatCompletionMessage{
+		Role:    openai.ChatMessageRoleUser,
+		Content: question,
+	})
+
+	// 发起请求
 	stream, err := api.Application.OpenAI.New(bigModel.OpenAI{
 		BaseUrl:   channelData.URL,
 		ApiKey:    channelData.Key,
@@ -143,9 +152,15 @@ func GetChatChat(ctx *gin.Context) {
 			return
 		}
 
-		// TODO 写入Token消耗数据
+		// 写入Token消耗数据
 		if response.Usage != nil {
-			fmt.Println(response.Usage)
+			t, _ := json.Marshal(response.Usage)
+			_ = model.LogApp.New(model.Log{
+				Operate: "系统任务",
+				Uid:     result.UID,
+				Job:     "Token统计",
+				Content: string(t),
+			}).Set()
 		}
 
 		// 转发消息
@@ -187,12 +202,11 @@ func GetChatModel(ctx *gin.Context) {
 	modelList := make([]ModelList, 0)
 	for _, v := range channels {
 		for _, v2 := range models {
-			if v.ID == v2.Cid {
+			if v.ID == v2.Cid && v2.Status == "use" {
 				modelList = append(modelList, ModelList{
 					Id:            v.ID,
 					ChannelName:   v.Name,
 					ModelNickname: v2.Nickname,
-					Category:      v2.Category,
 				})
 			}
 		}

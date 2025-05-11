@@ -77,4 +77,6 @@ const (
 
 // 文件夹目录
 
-const ()
+const (
+	AssetsPath = "./assets"
+)

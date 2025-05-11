@@ -27,6 +27,7 @@ func AuthVerify() gin.HandlerFunc {
 		path := []string{
 			"^/v1/auth/.+",
 			"^/v1/home/.+",
+			"^/assets/.+",
 		}
 		for i := range path {
 			re := regexp.MustCompile(path[i])
@@ -93,8 +94,8 @@ func AuthVerify() gin.HandlerFunc {
 		// 判断用户身份路由
 		userPath := []string{
 			"^/v1/chat/.+",
-			"^/v1/admin/userinfo",
-			"^/v1/admin/history",
+			"^/v1/admin/userinfo/.+",
+			"^/v1/admin/history/.+",
 		}
 		for i := range userPath {
 			re := regexp.MustCompile(userPath[i])
@@ -108,7 +109,7 @@ func AuthVerify() gin.HandlerFunc {
 		adminPath := []string{
 			"^/v1/admin/.+",
 		}
-		for i := range path {
+		for i := range adminPath {
 			re := regexp.MustCompile(adminPath[i])
 			if re.MatchString(ctx.Request.URL.Path) && userinfo.Role != "admin" {
 				ctx.JSON(http.StatusOK, global.MsgBack{

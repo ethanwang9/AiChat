@@ -21,6 +21,11 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: path => path.replace(new RegExp('^' + "/api/v1"), '/v1'),
             },
+            "/api": {
+                target: "http://localhost:8888",
+                changeOrigin: true,
+                rewrite: path => path.replace(new RegExp('^' + "/api"), ''),
+            },
         },
     },
 })

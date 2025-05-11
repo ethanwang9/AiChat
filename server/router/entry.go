@@ -27,6 +27,9 @@ func Init() *gin.Engine {
 	router.Use(middleware.AuthVerify())
 	router.Use(middleware.DefaultLogger())
 
+	// 静态资源目录
+	router.Static("/assets", global.AssetsPath)
+
 	// 路由
 	r := router.Group("/v1")
 	{

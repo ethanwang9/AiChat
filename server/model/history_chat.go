@@ -98,3 +98,21 @@ func (d *HistoryChat) GetLimitTotal() (data []HistoryChat, err error) {
 	}
 	return
 }
+
+// DeleteAll 删除全部记录
+func (d *HistoryChat) DeleteAll() (err error) {
+	if err = global.APP_DB.Model(&d).Where("uid = ?", d.Uid).Delete(&d).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#删除全部记录失败", zap.Error(err))
+		return
+	}
+	return
+}
+
+// DeleteID 删除指定用户对话记录
+func (d *HistoryChat) DeleteID() (err error) {
+	if err = global.APP_DB.Model(&d).Where("uid = ? AND group_id = ?", d.Uid, d.GroupID).Delete(&d).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#删除指定用户对话记录失败", zap.Error(err))
+		return
+	}
+	return
+}
