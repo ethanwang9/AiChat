@@ -3,7 +3,9 @@ import {
     HTTPAdminHistoryPage,
     HTTPAdminManagerAgentGet,
     HTTPAdminManagerLogGet, HTTPAdminManagerModelChannelGet, HTTPAdminManagerModelListGet,
-    HTTPAdminUserinfo
+    HTTPAdminUserinfo,
+    HTTPAdminChatHistoryGet,
+    HTTPAdminSystemConfigGet
 } from '@/types/http/admin';
 import { MsgBack } from '@/types/msgBack';
 import request from '@/utils/request';
@@ -16,6 +18,27 @@ import request from '@/utils/request';
 export const GetAdminUserinfo = (): MsgBack<HTTPAdminUserinfo> => request({
     url: "/admin/userinfo",
     method: "get",
+})
+
+// 上传用户头像
+export const UploadAdminUserAvatar = (avatar: File): MsgBack<null> => {
+    const formData = new FormData();
+    formData.append("avatar", avatar);
+
+    return request({
+        url: "/admin/userinfo",
+        method: "put",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+    })
+}
+
+// 注销账号
+export const DeleteAdminUser = (): MsgBack<null> => request({
+    url: "/admin/userinfo",
+    method: "delete",
 })
 
 // ===
@@ -225,4 +248,45 @@ export const UpdateAdminAgent = (id: number, name: string, description: string, 
         },
         data: formData,
     });
+}
+
+// ===
+// 【管理】对话管理
+// ===
+
+// 获取聊天历史记录
+export const GetAdminChatHistory = (limit: number, offset: number): MsgBack<HTTPAdminChatHistoryGet> => request({
+    url: "/admin/chat/history",
+    method: "get",
+    params: {
+        limit,
+        offset,
+    }
+})
+
+// ===
+// 【管理】系统
+// ===
+// 获取系统配置信息
+export const GetAdminSystemConfig = (): MsgBack<HTTPAdminSystemConfigGet> => request({
+    url: "/admin/system/config",
+    method: "get",
+})
+// 保存系统配置信息
+export const UpdateAdminSystemConfig = (name: string, gov: string, icp: string, logo: File | null): MsgBack<null> => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("gov", gov);
+    formData.append("icp", icp);
+    if (logo != null) {
+        formData.append("logo", logo);
+    } else {
+        formData.append("logo", new File([], "empty.png"));
+    }
+    
+    return request({
+        url: "/admin/system/config",
+        method: "put",
+        data: formData,
+    })
 }

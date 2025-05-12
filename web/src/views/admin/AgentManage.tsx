@@ -297,6 +297,7 @@ const AgentManage: FC = () => {
                 loading={getAgentPageLoading}
                 columns={columns}
                 dataSource={agentData}
+                rowKey="id"
                 pagination={{
                     position: ["bottomCenter"],
                     current: pagination.current,

@@ -116,3 +116,25 @@ func (d *HistoryChat) DeleteID() (err error) {
 	}
 	return
 }
+
+// GetLimits 获取分页数据 - admin
+func (d *HistoryChat) GetLimits(limit int, offset int) (data []HistoryChat, err error) {
+	if err = global.APP_DB.Model(&d).
+		Limit(limit).
+		Offset(offset).
+		Order("created_at desc").
+		Find(&data).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#获取分页数据失败", zap.Error(err))
+		return
+	}
+	return
+}
+
+// Count 获取全部记录数量
+func (d *HistoryChat) Count() (count int64, err error) {
+	if err = global.APP_DB.Model(&d).Count(&count).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 历史记录对话表#获取分页数据失败", zap.Error(err))
+		return
+	}
+	return
+}

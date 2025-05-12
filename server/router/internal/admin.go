@@ -13,6 +13,10 @@ func Admin(group *gin.RouterGroup, path string) {
 		// ===
 		// 获取用户信息
 		r.GET("/userinfo", admin.GetAdminUserinfo)
+		// 更新用户信息
+		r.PUT("/userinfo", admin.UpdateAdminUserinfo)
+		// 注销账号
+		r.DELETE("/userinfo", admin.DeleteAdminUserinfo)
 
 		// ===
 		// 用户历史记录
@@ -71,5 +75,19 @@ func Admin(group *gin.RouterGroup, path string) {
 		r.DELETE("/agent", admin.DeleteAdminAgent)
 		// 更新智能体
 		r.PUT("/agent", admin.PutAdminAgent)
+
+		// ===
+		// TODO 对话
+		// ===
+		// 获取对话历史记录
+		r.GET("/chat/history", admin.GetAdminChatHistory)
+
+		// ===
+		// 系统设置
+		// ===
+		// 获取系统配置
+		r.GET("/system/config", admin.GetAdminSystemConfig)
+		// TODO 更新系统配置
+		r.PUT("/system/config", admin.UpdateAdminSystemConfig)
 	}
 }

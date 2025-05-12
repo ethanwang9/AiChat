@@ -85,3 +85,26 @@ export interface HTTPAdminManagerAgentGet {
     }>
     total: number
 }
+
+export interface HTTPAdminChatHistoryGet {
+    history: Array<{
+        id: string;
+        uid: number;
+        group_id: string;
+        title: string;
+        question: string;
+        answer: string;
+        created_at: string;
+        updated_at: string;
+        deleted_at: string | null;
+    }>;
+    total: number;
+}
+
+export interface HTTPAdminSystemConfigGet {
+    logo: string;
+    name: string;
+    gov: string;
+    icp: string;
+}
+

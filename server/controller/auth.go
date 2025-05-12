@@ -10,6 +10,7 @@ import (
 	"server/global"
 	"server/model"
 	"server/service"
+	"strings"
 	"time"
 )
 
@@ -144,13 +145,19 @@ func GetAuthBack(ctx *gin.Context) {
 		return
 	}
 
+	// 替换用户头像
+	avatar := user.Avatar
+	if strings.HasPrefix(user.Avatar, "/assets/avatar/") {
+		avatar = global.SysDomain + user.Avatar
+	}
+
 	// 写入缓存数据库
 	rdbValue := global.RedisAuthMessage{
 		Status: true,
 		UID:    bind.Uid,
 		Role:   user.Role,
 		Openid: bind.Wechat,
-		Avatar: user.Avatar,
+		Avatar: avatar,
 		Time:   time.Now(),
 	}
 	rdbValueString, _ := json.Marshal(rdbValue)

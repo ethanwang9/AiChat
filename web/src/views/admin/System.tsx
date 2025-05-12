@@ -1,18 +1,71 @@
-import {FC, useState} from "react";
-import {Tabs, Input, Button, Upload, message, Form} from "antd";
+import {FC, useState, useRef} from "react";
+import {Tabs, Input, Button, Upload, message, Form, Spin} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
+import {GetAdminSystemConfig, UpdateAdminSystemConfig} from "@/apis/admin";
+import {useMount, useRequest} from "ahooks";
+import {HTTPAdminSystemConfigGet} from "@/types/http/admin";
+import type { RcFile } from 'antd/es/upload/interface';
 
 const System: FC = () => {
     const [activeTab, setActiveTab] = useState("system");
     const [systemForm] = Form.useForm();
     const [authForm] = Form.useForm();
     const [systemLogo, setSystemLogo] = useState("");
+    const [logoFile, setLogoFile] = useState<File | null>(null);
+
+    // 获取系统配置信息
+    const {loading: configLoading, run: fetchSystemConfig} = useRequest(
+        () => GetAdminSystemConfig(),
+        {
+            manual: true,
+            onSuccess: (response) => {
+                const result = response as unknown as HTTPAdminSystemConfigGet;
+                // 更新表单数据
+                systemForm.setFieldsValue({
+                    systemName: result.name,
+                    itDeptCode: result.icp,
+                    policeDeptCode: result.gov
+                });
+                // 设置系统logo
+                setSystemLogo(result.logo);
+            },
+            onError: () => {
+                message.error("获取系统配置失败");
+            }
+        }
+    );
+
+    // 保存系统配置信息
+    const {loading: savingConfig, run: saveSystemConfig} = useRequest(
+        (name: string, gov: string, icp: string, logo: File | null) => 
+            UpdateAdminSystemConfig(name, gov, icp, logo),
+        {
+            manual: true,
+            onSuccess: () => {
+                message.success("系统配置保存成功");
+                // 重新获取最新配置
+                fetchSystemConfig();
+            },
+            onError: () => {
+                message.error("系统配置保存失败");
+            }
+        }
+    );
+
+    // 组件挂载时获取系统配置
+    useMount(() => {
+        fetchSystemConfig();
+    });
 
     const handleSystemSave = async () => {
         try {
             const values = await systemForm.validateFields();
-            console.log('System form values:', {...values, systemLogo});
-            message.success("系统配置保存成功");
+            saveSystemConfig(
+                values.systemName,
+                values.policeDeptCode || "",
+                values.itDeptCode || "",
+                logoFile
+            );
         } catch (error) {
             console.error('Validation failed:', error);
         }
@@ -28,14 +81,21 @@ const System: FC = () => {
         }
     };
 
-    const handleLogoChange = (info: any) => {
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} 上传成功`);
-            // Here you would normally update the systemLogo with the URL from the server
-            setSystemLogo(URL.createObjectURL(info.file.originFileObj));
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} 上传失败`);
+    const beforeUpload = (file: RcFile) => {
+        const isImage = file.type.startsWith('image/');
+        if (!isImage) {
+            message.error('只能上传图片文件!');
+            return false;
         }
+        
+        // 保存文件对象以便后续上传
+        setLogoFile(file);
+        
+        // 创建预览URL
+        setSystemLogo(URL.createObjectURL(file));
+        
+        // 阻止自动上传
+        return false;
     };
 
     // Define tabs items
@@ -44,59 +104,66 @@ const System: FC = () => {
             key: "system",
             label: "系统配置",
             children: (
-                <Form
-                    form={systemForm}
-                    layout="vertical"
-                    className="max-w-xl"
-                    initialValues={{
-                        systemName: "",
-                        itDeptCode: "",
-                        policeDeptCode: ""
-                    }}
-                >
-                    <Form.Item label="系统 LOGO" className="mb-2">
-                        <div className="flex items-center">
-                            {systemLogo ? (
-                                <img
-                                    src={systemLogo}
-                                    alt="系统LOGO"
-                                    className="w-12 h-12 mr-3 object-contain"
-                                />
-                            ) : (
-                                <div
-                                    className="w-12 h-12 mr-3 bg-gray-100 flex items-center justify-center text-xs">
-                                    LOGO
-                                </div>
-                            )}
-                            <Upload
-                                name="logo"
-                                action="/api/upload" // Replace with your actual upload endpoint
-                                onChange={handleLogoChange}
-                                showUploadList={false}
-                            >
-                                <Button icon={<UploadOutlined/>}>更改</Button>
-                            </Upload>
-                        </div>
-                    </Form.Item>
-
-                    <Form.Item label="系统名称" name="systemName"
-                               rules={[{required: true, message: '请输入系统名称'}]}
+                <Spin spinning={configLoading}>
+                    <Form
+                        form={systemForm}
+                        layout="vertical"
+                        className="max-w-xl"
+                        initialValues={{
+                            systemName: "",
+                            itDeptCode: "",
+                            policeDeptCode: ""
+                        }}
                     >
-                        <Input placeholder="请输入系统名称"/>
-                    </Form.Item>
+                        <Form.Item label="系统 LOGO" className="mb-2">
+                            <div className="flex items-center">
+                                {systemLogo ? (
+                                    <img
+                                        src={systemLogo}
+                                        alt="系统LOGO"
+                                        className="w-12 h-12 mr-3 object-contain"
+                                    />
+                                ) : (
+                                    <div
+                                        className="w-12 h-12 mr-3 bg-gray-100 flex items-center justify-center text-xs">
+                                        LOGO
+                                    </div>
+                                )}
+                                <Upload
+                                    name="logo"
+                                    beforeUpload={beforeUpload}
+                                    showUploadList={false}
+                                >
+                                    <Button icon={<UploadOutlined/>}>更改</Button>
+                                </Upload>
+                            </div>
+                        </Form.Item>
 
-                    <Form.Item label="工信部备案号" name="itDeptCode">
-                        <Input placeholder="请输入工信部备案号"/>
-                    </Form.Item>
+                        <Form.Item label="系统名称" name="systemName"
+                                rules={[{required: true, message: '请输入系统名称'}]}
+                        >
+                            <Input placeholder="请输入系统名称"/>
+                        </Form.Item>
 
-                    <Form.Item label="公安部备案号" name="policeDeptCode">
-                        <Input placeholder="请输入公安部备案号"/>
-                    </Form.Item>
+                        <Form.Item label="工信部备案号" name="itDeptCode">
+                            <Input placeholder="请输入工信部备案号"/>
+                        </Form.Item>
 
-                    <Form.Item>
-                        <Button type="primary" onClick={handleSystemSave}>保存更改</Button>
-                    </Form.Item>
-                </Form>
+                        <Form.Item label="公安部备案号" name="policeDeptCode">
+                            <Input placeholder="请输入公安部备案号"/>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button 
+                                type="primary" 
+                                onClick={handleSystemSave}
+                                loading={savingConfig}
+                            >
+                                保存更改
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Spin>
             )
         },
         {

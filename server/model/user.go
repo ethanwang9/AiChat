@@ -50,3 +50,21 @@ func (d *User) Count() (count int64, err error) {
 	}
 	return
 }
+
+// Update 更新数据
+func (d *User) Update() (err error) {
+	if err = global.APP_DB.Model(&d).Where("uid = ?", d.Uid).Updates(&d).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 用户表#更新数据失败", zap.Error(err))
+		return
+	}
+	return
+}
+
+// Delete 删除账号
+func (d *User) Delete() (err error) {
+	if err = global.APP_DB.Model(&d).Where("uid = ?", d.Uid).Delete(&d).Error; err != nil {
+		global.APP_LOG.Warn("[数据库] 用户表#删除数据失败", zap.Error(err))
+		return
+	}
+	return
+}
