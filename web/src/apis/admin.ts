@@ -1,12 +1,12 @@
 import {
     HTTPAdminHistoryGroupInfo,
     HTTPAdminHistoryPage,
+    HTTPAdminManagerAgentGet,
     HTTPAdminManagerLogGet, HTTPAdminManagerModelChannelGet, HTTPAdminManagerModelListGet,
     HTTPAdminUserinfo
 } from '@/types/http/admin';
 import { MsgBack } from '@/types/msgBack';
 import request from '@/utils/request';
-import { url } from 'inspector';
 
 // ===
 // 用户
@@ -156,3 +156,73 @@ export const CreateAdminModelList = (cid: number, name: string, nickname: string
         status,
     }
 })
+
+// ===
+// 【管理】模型
+// ===
+
+// 获取智能体
+export const GetAdminAgent = (limit: number, offset: number): MsgBack<HTTPAdminManagerAgentGet> => request({
+    url: "/admin/agent",
+    method: "get",
+    params: {
+        limit,
+        offset,
+    }
+})
+
+// 删除智能体
+export const DeleteAdminAgent = (id: number): MsgBack<null> => request({
+    url: "/admin/agent",
+    method: "delete",
+    data: {
+        id,
+    }
+})
+
+// 添加智能体
+export const CreateAdminAgent = (name: string, description: string, prompt: string, temperature: number, avatar: File | null, category: string): MsgBack<null> => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("prompt", prompt);
+    formData.append("temperature", temperature.toString());
+    formData.append("category", category);
+    if (avatar) {
+        formData.append("avatar", avatar);
+    }
+
+    return request({
+        url: "/admin/agent",
+        method: "post",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+    });
+}
+
+// 更新智能体
+export const UpdateAdminAgent = (id: number, name: string, description: string, prompt: string, temperature: number, avatar: File | null, category: string): MsgBack<null> => {
+    const formData = new FormData();
+    formData.append("id", id.toString());
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("prompt", prompt);
+    formData.append("temperature", temperature.toString());
+    formData.append("category", category);
+    if (avatar !== null) {
+        formData.append("avatar", avatar);
+    } else {
+        formData.append("avatar", new File([], "empty.png"));
+    }
+
+    return request({
+        url: "/admin/agent",
+        method: "put",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+    });
+}

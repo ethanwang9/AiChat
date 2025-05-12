@@ -65,5 +65,11 @@ func Admin(group *gin.RouterGroup, path string) {
 		// ===
 		// 创建智能体
 		r.POST("/agent", admin.PostAdminAgent)
+		// 获取智能体
+		r.GET("/agent", admin.GetAdminAgent)
+		// 删除智能体
+		r.DELETE("/agent", admin.DeleteAdminAgent)
+		// 更新智能体
+		r.PUT("/agent", admin.PutAdminAgent)
 	}
 }

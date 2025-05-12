@@ -1,5 +1,5 @@
 import {FC, useState} from "react";
-import {Button, Table, Tabs, Space, Tag, message, Modal, Form, Input, Select, InputNumber} from "antd";
+import {Button, Table, Tabs, Space, Tag, message, Modal, Form, Input, Select} from "antd";
 import type {TableProps} from "antd";
 import {EditOutlined, DeleteOutlined, PlusOutlined} from "@ant-design/icons";
 import {useMount, useRequest} from "ahooks";

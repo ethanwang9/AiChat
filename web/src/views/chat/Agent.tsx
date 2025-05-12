@@ -1,13 +1,18 @@
 import {FC, useEffect, useState} from "react";
-import {Card, Divider, Tabs} from "antd";
-import {Outlet, useLocation} from "react-router";
-
-const {TabPane} = Tabs;
+import {Card, Divider, Tabs, Spin} from "antd";
+import {Outlet, useLocation, useNavigate} from "react-router";
+import {useMount, useRequest} from "ahooks";
+import {GetChatAgentCategory, GetChatAgentList} from "@/apis/chat";
+import {HTTPChatAgentList} from "@/types/http/chat";
 
 const Agent: FC = () => {
     // 初始化
     const [showChat, setShowChat] = useState(false);
+    const [categories, setCategories] = useState<string[]>(["全部"]);
+    const [currentCategory, setCurrentCategory] = useState<string>("全部");
+    const [agentList, setAgentList] = useState<HTTPChatAgentList[]>([]);
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (location.pathname === "/service/agent/chat") {
@@ -17,62 +22,98 @@ const Agent: FC = () => {
         }
     }, [location.pathname]);
 
-    // 卡片列表
-    const card = (
-        <div className="grid grid-cols-3 gap-4">
-            <Card>
-                <div className="flex gap-4">
-                    <img
-                        className="h-20 w-20"
-                        src="/src/assets/avatar/2.png"
-                        alt="Agent"
-                    />
-                    <div>
-                        <p className="mb-2 line-clamp-1 text-base font-bold">
-                        爆炸标题党
-                        </p>
-                        <p className="line-clamp-2 text-sm">
-                        Boooom！炸裂的标题诞生！
-                        </p>
-                    </div>
-                </div>
-            </Card>
-            <Card>
-                <div className="flex gap-4">
-                    <img
-                        className="h-20 w-20"
-                        src="/src/assets/avatar/3.png"
-                        alt="Agent"
-                    />
-                    <div>
-                        <p className="mb-2 line-clamp-1 text-base font-bold">
-                        AI编码助手
-                        </p>
-                        <p className="line-clamp-2 text-sm">
-                        你好，我是你的 AI 编码助手，我能帮你写代码、写注释、写单元测试，帮你读代码、排查代码问题等。快来考考我吧！
-                        </p>
-                    </div>
-                </div>
-            </Card>
-            <Card>
-                <div className="flex gap-4">
-                    <img
-                        className="h-20 w-20"
-                        src="/src/assets/avatar/4.png"
-                        alt="Agent"
-                    />
-                    <div>
-                        <p className="mb-2 line-clamp-1 text-base font-bold">
-                        小红书文案大师
-                        </p>
-                        <p className="line-clamp-2 text-sm">
-                        精通小红书爆款文案创作
-                        </p>
-                    </div>
-                </div>
-            </Card>
-        </div>
+    // 获取智能体分类
+    const {loading: categoryLoading} = useRequest(
+        () => GetChatAgentCategory(),
+        {
+            manual: false,
+            onSuccess: (response) => {
+                // 确保"全部"始终是第一个选项
+                if (response && Array.isArray(response)) {
+                    const allCategories = ["全部", ...response];
+                    setCategories(allCategories);
+                }
+            }
+        }
     );
+
+    // 获取智能体列表
+    const {loading: agentLoading, run: fetchAgentList} = useRequest(
+        (category: string) => GetChatAgentList(category),
+        {
+            manual: true,
+            onSuccess: (response) => {
+                if (response && Array.isArray(response)) {
+                    setAgentList(response);
+                }
+            }
+        }
+    );
+
+    // 处理标签切换
+    const handleTabChange = (key: string) => {
+        setCurrentCategory(key);
+        fetchAgentList(key);
+    };
+
+    // 处理智能体点击
+    const handleAgentClick = (agentId: number) => {
+        navigate(`/service/agent/chat?id=${agentId}`);
+    };
+
+    // 生命周期 - 挂载
+    useMount(() => {
+        // 初始化加载全部分类的智能体
+        fetchAgentList("全部");
+    });
+
+    // 渲染智能体卡片列表
+    const renderAgentCards = () => {
+        if (agentLoading) {
+            return (
+                <div className="flex justify-center py-8">
+                    <Spin size="large" />
+                </div>
+            );
+        }
+
+        if (agentList.length === 0) {
+            return (
+                <div className="flex justify-center py-8">
+                    <p className="text-gray-500">暂无智能体</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="grid grid-cols-3 gap-4">
+                {agentList.map((agent) => (
+                    <Card 
+                        key={agent.id} 
+                        hoverable 
+                        onClick={() => handleAgentClick(agent.id)}
+                        className="cursor-pointer"
+                    >
+                        <div className="flex gap-4">
+                            <img
+                                className="h-20 w-20 rounded-xl"
+                                src={agent.avatar || "/logo.svg"}
+                                alt={agent.name}
+                            />
+                            <div>
+                                <p className="mb-2 line-clamp-1 text-base font-bold">
+                                    {agent.name}
+                                </p>
+                                <p className="line-clamp-2 text-sm">
+                                    {agent.description}
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+        );
+    };
 
     return (
         <>
@@ -90,17 +131,22 @@ const Agent: FC = () => {
 
                     {/*菜单*/}
                     <div className="px-16">
-                        <Tabs defaultActiveKey="1">
-                            <TabPane tab="全部" key="1">
-                                {card}
-                            </TabPane>
-                            <TabPane tab="文本编辑" key="2">
-                                {card}
-                            </TabPane>
-                            <TabPane tab="编程开发" key="3">
-                                {card}
-                            </TabPane>
-                        </Tabs>
+                        {categoryLoading ? (
+                            <div className="flex justify-center py-8">
+                                <Spin size="large" />
+                            </div>
+                        ) : (
+                            <Tabs 
+                                defaultActiveKey="全部"
+                                activeKey={currentCategory}
+                                onChange={handleTabChange}
+                                items={categories.map(category => ({
+                                    key: category,
+                                    label: category,
+                                    children: renderAgentCards()
+                                }))}
+                            />
+                        )}
                     </div>
                 </div>
             ) : (

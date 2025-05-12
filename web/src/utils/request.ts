@@ -10,7 +10,10 @@ const request = axios.create({
 // 请求拦截 - 发送前
 request.interceptors.request.use(function (config) {
     // 设置请求类型
-    config.headers["content-type"] = "application/x-www-form-urlencoded";
+    if (config.headers!["content-type"] === undefined) {
+        config.headers!["content-type"] = "application/x-www-form-urlencoded";
+    }
+
     // 添加用户令牌
     const userinfo: UserState = JSON.parse(window.localStorage.getItem("user") || '{}')
     if (userinfo.token && userinfo.token.length > 0) {

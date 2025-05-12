@@ -40,8 +40,8 @@ const PK: FC = () => {
     const [rightIsStreaming, setRightIsStreaming] = useState<boolean>(false);
     
     // 分组ID
-    const [leftGroupId, setLeftGroupId] = useState<string>(uuidv4().replace(/-/g, ''));
-    const [rightGroupId, setRightGroupId] = useState<string>(uuidv4().replace(/-/g, ''));
+    const [leftGroupId] = useState<string>(uuidv4().replace(/-/g, ''));
+    const [rightGroupId] = useState<string>(uuidv4().replace(/-/g, ''));
     
     // 当前问题
     const [currentQuestion, setCurrentQuestion] = useState<string>("");

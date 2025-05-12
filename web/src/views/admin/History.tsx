@@ -1,9 +1,9 @@
-import { FC, useState } from "react";
-import { Button, Space, Table, TableProps, Modal, message } from "antd";
-import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
-import { DeleteAdminHistory, DeleteAdminHistoryID, GetAdminHistoryGroupID, GetAdminHistoryPage } from "@/apis/admin.ts";
-import { useMount, useRequest } from "ahooks";
-import { HTTPAdminHistoryGroupInfo } from "@/types/http/admin";
+import {FC, useState} from "react";
+import {Button, Space, Table, TableProps, Modal, message} from "antd";
+import {DeleteOutlined, EyeOutlined} from "@ant-design/icons";
+import {DeleteAdminHistory, DeleteAdminHistoryID, GetAdminHistoryGroupID, GetAdminHistoryPage} from "@/apis/admin.ts";
+import {useMount, useRequest} from "ahooks";
+import {HTTPAdminHistoryGroupInfo, HTTPAdminHistoryPage} from "@/types/http/admin";
 import MarkdownRenderer from "@/components/chat/MarkdownRenderer";
 import {formatDate} from "@/utils/tools.ts";
 
@@ -15,17 +15,17 @@ interface DataType {
 }
 
 // 聊天消息组件
-const ChatMessage: FC<{ message: HTTPAdminHistoryGroupInfo }> = ({ message }) => {
+const ChatMessage: FC<{ message: HTTPAdminHistoryGroupInfo }> = ({message}) => {
     return (
         <div className="flex flex-col gap-4 mb-4">
             <div className="flex justify-end">
                 <div className="bg-blue-100 rounded-lg p-3 max-w-[80%]">
-                    <MarkdownRenderer content={message.question} />
+                    <MarkdownRenderer content={message.question}/>
                 </div>
             </div>
             <div className="flex justify-start">
                 <div className="bg-gray-100 rounded-lg p-3 max-w-[80%]">
-                    <MarkdownRenderer content={message.answer} />
+                    <MarkdownRenderer content={message.answer}/>
                 </div>
             </div>
         </div>
@@ -47,25 +47,26 @@ const History: FC = () => {
     const [currentTitle, setCurrentTitle] = useState("");
 
     // 获取历史记录分页数据
-    const { run: getHistoryPage, loading: getHistoryPageLoading } = useRequest(
+    const {run: getHistoryPage, loading: getHistoryPageLoading} = useRequest(
         (limit: number, page: number) => GetAdminHistoryPage(limit, page),
         {
             manual: true,
             onSuccess: (response) => {
-                const tableData = response.history.map(item => ({
+                const responseType = response as unknown as HTTPAdminHistoryPage
+                const tableData = responseType.history.map((item) => ({
                     group_id: item.group_id,
                     title: item.title,
                     created_at: formatDate(item.created_at),
                     id: item.id,
                 }));
                 setHistoryData(tableData);
-                setPagination(prev => ({ ...prev, total: response.total }));
+                setPagination(prev => ({...prev, total: responseType.total}));
             },
         }
     );
 
     // 删除全部历史记录
-    const { run: deleteAllHistory } = useRequest(DeleteAdminHistory,
+    const {run: deleteAllHistory} = useRequest(DeleteAdminHistory,
         {
             manual: true,
             onSuccess: () => {
@@ -79,7 +80,7 @@ const History: FC = () => {
     );
 
     // 删除指定历史记录
-    const { run: deleteHistoryID } = useRequest(
+    const {run: deleteHistoryID} = useRequest(
         (id: string) => DeleteAdminHistoryID(id),
         {
             manual: true,
@@ -94,7 +95,7 @@ const History: FC = () => {
     );
 
     // 获取历史记录指定数据
-    const { run: getHistoryGID } = useRequest(
+    const {run: getHistoryGID} = useRequest(
         (group_id: string) => GetAdminHistoryGroupID(group_id),
         {
             manual: true,
@@ -134,8 +135,8 @@ const History: FC = () => {
             key: 'action',
             render: (_, record) => (
                 <Space>
-                    <Button type="text" icon={<EyeOutlined />} onClick={() => handleViewHistory(record.group_id)} />
-                    <Button type="text" danger icon={<DeleteOutlined />} onClick={() => {
+                    <Button type="text" icon={<EyeOutlined/>} onClick={() => handleViewHistory(record.group_id)}/>
+                    <Button type="text" danger icon={<DeleteOutlined/>} onClick={() => {
                         Modal.confirm({
                             title: '危险操作',
                             content: '您确定要删除话题吗？',
@@ -147,7 +148,7 @@ const History: FC = () => {
                                 getHistoryPage(pagination.pageSize, pagination.current);
                             },
                         });
-                    }} />
+                    }}/>
                 </Space>
             ),
         },
@@ -155,7 +156,7 @@ const History: FC = () => {
 
     // 处理分页变化
     const handlePaginationChange = (page: number, pageSize: number) => {
-        setPagination(prev => ({ ...prev, current: page, pageSize }));
+        setPagination(prev => ({...prev, current: page, pageSize}));
         // 直接传递页码作为offset
         getHistoryPage(pageSize, page);
     };
@@ -171,7 +172,7 @@ const History: FC = () => {
             <p className="font-bold text-2xl">历史对话记录</p>
             <Button
                 className="w-40 !py-4"
-                icon={<DeleteOutlined />}
+                icon={<DeleteOutlined/>}
                 color="danger"
                 variant="solid"
                 onClick={() => {
@@ -215,7 +216,7 @@ const History: FC = () => {
             >
                 <div className="max-h-[60vh] overflow-y-auto">
                     {chatMessages.map((message, index) => (
-                        <ChatMessage key={index} message={message} />
+                        <ChatMessage key={index} message={message}/>
                     ))}
                 </div>
             </Modal>

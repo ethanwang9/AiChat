@@ -2,8 +2,9 @@
 export interface ChatRequestParams {
     channel: number;
     model: string;
-    question:string;
-    gid: string;
+    question: string;
+    gid?: string;
+    aid?: number;
 }
 
 export interface HttpModelList {
@@ -21,4 +22,13 @@ export interface HTTPChatHistory {
 export interface HTTPChatHistoryList {
     role: string;
     content: string;
+}
+
+export interface HTTPChatAgentList {
+    id: number;
+    name: string;
+    description: string;
+    avatar: string;
+    category: string;
+    created_at: string;
 }

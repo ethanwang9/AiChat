@@ -1,4 +1,4 @@
-import { HTTPChatHistory, HTTPChatHistoryList, HttpModelList } from '@/types/http/chat';
+import { HTTPChatAgentList, HTTPChatHistory, HTTPChatHistoryList, HttpModelList } from '@/types/http/chat';
 import { MsgBack } from '@/types/msgBack';
 import request from '@/utils/request';
 
@@ -42,5 +42,26 @@ export const GetChatHistory = (): MsgBack<Array<HTTPChatHistory>> => request({
 // 获取指定历史记录
 export const GetChatHistoryList = (groupID: string): MsgBack<Array<HTTPChatHistoryList>> => request({
     url: "/chat/history/" + groupID,
+    method: "get",
+})
+
+// 获取智能体分类
+export const GetChatAgentCategory = (): MsgBack<Array<string>> => request({
+    url: "/chat/agent/category",
+    method: "get",
+})
+
+// 获取智能体列表
+export const GetChatAgentList = (category: string): MsgBack<Array<HTTPChatAgentList>> => request({
+    url: "/chat/agent/list",
+    method: "get",
+    params: {
+        category,
+    },
+})
+
+// 获取智能体详情
+export const GetChatAgentID = (id: number): MsgBack<HTTPChatAgentList> => request({
+    url: "/chat/agent/" + id,
     method: "get",
 })

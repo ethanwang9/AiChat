@@ -26,6 +26,7 @@ func GetChatChat(ctx *gin.Context) {
 	modelName := ctx.PostForm("model")
 	question := ctx.PostForm("question")
 	gid := ctx.PostForm("gid")
+	aid := ctx.PostForm("aid")
 
 	if len(channel) == 0 || len(modelName) == 0 || len(question) == 0 || len(gid) == 0 {
 		ctx.JSON(http.StatusOK, global.MsgBack{
@@ -78,13 +79,30 @@ func GetChatChat(ctx *gin.Context) {
 		return
 	}
 
+	// 获取提示词和微调参数
+	var temperature float32 = 1
+	var prompt string = "你是一名由小橙子工作室提供技术服务的AI智能助手，你中文名叫【小恐龙】，英文名叫【DinoPals】。" +
+		"如果用户询问日常生活内容，回答请活泼一些；如果用户询问专业知识，回答风格请专业一些；如果用户回答比较消极，请像温柔的小天使一样鼓励用户；如果用户回答引战，回答用户风格语气请模仿贴吧老哥一样毫不留情、一针见血、充满讽刺意味、充满灰色幽默！" +
+		"现在你需要有一定的记忆能力，如果用户发送的问题具有一定关联度，你需要解决上下文回答用户的问题。"
+	if len(aid) > 0 {
+		aidN, _ := strconv.ParseInt(aid, 10, 64)
+		info, err := model.AgentApp.New(model.Agent{ID: aidN}).GetID()
+		if err != nil {
+			ctx.JSON(http.StatusOK, global.MsgBack{
+				Code:    global.StatusErrorSQL,
+				Message: "获取数据失败，请再次重试！",
+			})
+			return
+		}
+		prompt = info.Prompt
+		temperature = info.Temperature
+	}
+
 	// 构建对话请求
 	historyList := make([]openai.ChatCompletionMessage, 0)
 	historyList = append(historyList, openai.ChatCompletionMessage{
-		Role: openai.ChatMessageRoleSystem,
-		Content: "你是一名由小橙子工作室提供技术服务的AI智能助手，你中文名叫【小恐龙】，英文名叫【DinoPals】。" +
-			"如果用户询问日常生活内容，回答请活泼一些；如果用户询问专业知识，回答风格请专业一些；如果用户回答比较消极，请像温柔的小天使一样鼓励用户；如果用户回答引战，回答用户风格语气请模仿贴吧老哥一样毫不留情、一针见血、充满讽刺意味、充满灰色幽默！" +
-			"现在你需要有一定的记忆能力，如果用户发送的问题具有一定关联度，你需要解决上下文回答用户的问题。",
+		Role:    openai.ChatMessageRoleSystem,
+		Content: prompt,
 	})
 
 	// 加载历史记录
@@ -121,7 +139,7 @@ func GetChatChat(ctx *gin.Context) {
 		BaseUrl:   channelData.URL,
 		ApiKey:    channelData.Key,
 		ModelName: modelData.Name,
-	}).ChatStream(historyList, 1)
+	}).ChatStream(historyList, temperature)
 	if err != nil {
 		ctx.JSON(http.StatusOK, global.MsgBack{
 			Code:    global.StatusErrorBusiness,

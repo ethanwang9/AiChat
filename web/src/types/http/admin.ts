@@ -71,3 +71,17 @@ export interface HTTPAdminManagerModelListGet {
     }>
     total: number
 }
+
+export interface HTTPAdminManagerAgentGet {
+    agent: Array<{
+        id: number,
+        name: string,
+        description: string,
+        prompt: string,
+        temperature: number,
+        avatar: string,
+        category: string,
+        created_at: string,
+    }>
+    total: number
+}

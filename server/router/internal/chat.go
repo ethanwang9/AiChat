@@ -28,5 +28,15 @@ func Chat(group *gin.RouterGroup, path string) {
 		// 上报擂台对话记录
 		r.POST("/pk/history", chat.PostChatPKHistory)
 
+		// ===
+		// 智能体
+		// ===
+		// 获取智能体分类
+		r.GET("/agent/category", chat.GetChatAgentCategory)
+		// 获取智能体列表
+		r.GET("/agent/list", chat.GetChatAgentList)
+		// 获取指定智能体信息
+		r.GET("/agent/:id", chat.GetChatAgentID)
+
 	}
 }
