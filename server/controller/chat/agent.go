@@ -1,10 +1,16 @@
 package chat
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
 	"server/global"
 	"server/model"
+	"server/service"
 	"strconv"
+
+	"github.com/redis/go-redis/v9"
 
 	"github.com/gin-gonic/gin"
 )
@@ -99,5 +105,67 @@ func GetChatAgentID(ctx *gin.Context) {
 		Code:    global.StatusSuccess,
 		Message: "success",
 		Data:    agent,
+	})
+}
+
+// PostChatAgent 上报智能体对话记录
+func PostChatAgent(ctx *gin.Context) {
+	// 获取参数
+	aid := ctx.PostForm("aid")
+	question := ctx.PostForm("question")
+	answer := ctx.PostForm("answer")
+
+	if len(aid) == 0 || len(question) == 0 || len(answer) == 0 {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusiness,
+			Message: "请求参数无效",
+		})
+		return
+	}
+
+	// 获取token
+	tokenString := ctx.GetHeader("Authorization")[7:]
+	token, _ := service.JwtToken.Decode(tokenString)
+	state, _ := token.GetIssuer()
+
+	// 获取缓存信息
+	cacheInfo, err := global.APP_REDIS.Get(ctx, fmt.Sprintf("Login#%s", state)).Result()
+	switch {
+	case errors.Is(err, redis.Nil):
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusinessToken,
+			Message: "令牌无效，请重新登录",
+		})
+		return
+	case err != nil:
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusiness,
+			Message: "获取缓存信息失败，" + err.Error(),
+		})
+		return
+	}
+	var result global.RedisAuthMessage
+	_ = json.Unmarshal([]byte(cacheInfo), &result)
+
+	// 写入数据库
+	aidN, _ := strconv.Atoi(aid)
+	err = model.HistoryAgentApp.New(model.HistoryAgent{
+		Uid:      result.UID,
+		Aid:      aidN,
+		Question: question,
+		Answer:   answer,
+	}).Set()
+	if err != nil {
+		ctx.JSON(http.StatusOK, global.MsgBack{
+			Code:    global.StatusErrorBusiness,
+			Message: "保存对话记录失败",
+		})
+		return
+	}
+
+	// 返回消息
+	ctx.JSON(http.StatusOK, global.MsgBack{
+		Code:    global.StatusSuccess,
+		Message: "success",
 	})
 }

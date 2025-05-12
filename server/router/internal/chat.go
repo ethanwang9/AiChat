@@ -37,6 +37,8 @@ func Chat(group *gin.RouterGroup, path string) {
 		r.GET("/agent/list", chat.GetChatAgentList)
 		// 获取指定智能体信息
 		r.GET("/agent/:id", chat.GetChatAgentID)
+		// 上报智能体对话记录
+		r.POST("/agent", chat.PostChatAgent)
 
 	}
 }

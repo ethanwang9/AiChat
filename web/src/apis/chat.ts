@@ -65,3 +65,14 @@ export const GetChatAgentID = (id: number): MsgBack<HTTPChatAgentList> => reques
     url: "/chat/agent/" + id,
     method: "get",
 })
+
+// 上报智能体对话记录
+export const PostAgentChatHistory = (aid: number, question: string, answer: string): MsgBack<null> => request({
+    url: "/chat/agent",
+    method: "post",
+    data: {
+        aid,
+        question,
+        answer,
+    }
+})

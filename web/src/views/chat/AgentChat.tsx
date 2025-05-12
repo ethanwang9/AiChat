@@ -4,7 +4,7 @@ import {Button, Divider, Flex, Select, message} from "antd";
 import {Bubble, Sender} from "@ant-design/x";
 import {useLocation, useNavigate} from "react-router";
 import {useMount, useRequest} from "ahooks";
-import {GetChatAgentID, GetModelList} from "@/apis/chat";
+import {GetChatAgentID, GetModelList, PostAgentChatHistory} from "@/apis/chat";
 import {ChatRequestParams, HTTPChatAgentList, HttpModelList} from "@/types/http/chat";
 import {streamRequest, SSEResponse} from "@/utils/sse.ts";
 import {useUserStore} from "@/hooks/userHooks.ts";
@@ -35,6 +35,19 @@ const AgentChat: FC = () => {
     const location = useLocation();
     const senderRef = useRef<any>(null);
     const userStore = useUserStore();
+
+    // 上报智能体对话记录
+    const {run: uploadAgentChatHistory} = useRequest((
+        aid: number,
+        question: string,
+        answer: string
+    ) => PostAgentChatHistory(
+        aid,
+        question,
+        answer,
+    ), {
+        manual: true,
+    });
 
     // 从URL获取智能体ID
     const getAgentIdFromUrl = () => {
@@ -125,6 +138,21 @@ const AgentChat: FC = () => {
                                 lastMsg.isStreaming = false;
                             }
                         }
+
+                        // 上报智能体对话记录
+                        if (updated.length >= 2) {
+                            const userMsg = updated[updated.length - 2]; // 用户消息
+                            const aiMsg = updated[updated.length - 1];   // AI消息
+                            
+                            if (agentDetail?.id && userMsg.role === 'user' && aiMsg.role === 'assistant') {
+                                uploadAgentChatHistory(
+                                    agentDetail.id,
+                                    userMsg.content,
+                                    aiMsg.content
+                                );
+                            }
+                        }
+
                         return updated;
                     });
 
