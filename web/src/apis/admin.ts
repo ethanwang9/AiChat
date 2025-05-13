@@ -6,7 +6,12 @@ import {
     HTTPAdminUserinfo,
     HTTPAdminChatHistoryGet,
     HTTPAdminSystemConfigGet,
-    HTTPAdminSystemAuthGet
+    HTTPAdminSystemAuthGet,
+    HTTPAdminUserListGet,
+    HTTPAdminChatAgentGet,
+    HTTPAdminChatPkGet,
+    HTTPAdminPanelBaseGet,
+    HTTPAdminPanelChatGet
 } from '@/types/http/admin';
 import { MsgBack } from '@/types/msgBack';
 import request from '@/utils/request';
@@ -264,6 +269,49 @@ export const GetAdminChatHistory = (limit: number, offset: number): MsgBack<HTTP
         offset,
     }
 })
+// 获取智能体历史记录
+export const GetAdminChatAgent = (limit: number, offset: number): MsgBack<HTTPAdminChatAgentGet> => request({
+    url: "/admin/chat/agent",
+    method: "get",
+    params: {
+        limit,
+        offset,
+    }
+})
+// 获取擂台记录
+export const GetAdminChatPk = (limit: number, offset: number): MsgBack<HTTPAdminChatPkGet> => request({
+    url: "/admin/chat/pk",
+    method: "get",
+    params: {
+        limit,
+        offset,
+    }
+})
+// 删除聊天历史记录
+export const DeleteAdminChatHistory = (id: string): MsgBack<null> => request({
+    url: "/admin/chat/history",
+    method: "delete",
+    data: {
+        id,
+    }
+})
+// 删除智能体历史记录
+export const DeleteAdminChatAgent = (id: string): MsgBack<null> => request({
+    url: "/admin/chat/agent",
+    method: "delete",
+    data: {
+        id,
+    }
+})
+// 删除擂台历史记录
+export const DeleteAdminChatPk = (id: string): MsgBack<null> => request({
+    url: "/admin/chat/pk",
+    method: "delete",
+    data: {
+        id,
+    }
+})
+
 
 // ===
 // 【管理】系统
@@ -284,7 +332,7 @@ export const UpdateAdminSystemConfig = (name: string, gov: string, icp: string, 
     } else {
         formData.append("logo", new File([], "empty.png"));
     }
-    
+
     return request({
         url: "/admin/system/config",
         method: "put",
@@ -303,5 +351,73 @@ export const UpdateAdminSystemAuth = (appid: string, key: string): MsgBack<null>
     data: {
         appid,
         key,
+    }
+})
+
+// ===
+// 【管理】用户
+// ===
+// 获取用户列表
+export const GetAdminUserList = (limit: number, offset: number, uid: number, name: string): MsgBack<HTTPAdminUserListGet> => request({
+    url: "/admin/user",
+    method: "get",
+    params: {
+        limit,
+        offset,
+        uid,
+        name,
+    }
+})
+// 更新用户信息
+export const UpdateAdminUser = (uid: number, name: string, mail: string, phone: string, avatar: File | null, status: string, role: string): MsgBack<null> => {
+    const formData = new FormData();
+    formData.append("uid", uid.toString());
+    formData.append("name", name);
+    formData.append("mail", mail);
+    formData.append("phone", phone);
+    if (avatar != null) {
+        formData.append("avatar", avatar);
+    } else {
+        formData.append("avatar", new File([], "empty.png"));
+    }
+    formData.append("status", status);
+    formData.append("role", role);
+
+    return request({
+        url: "/admin/user",
+        method: "put",
+        data: formData,
+    })
+}
+// 删除用户
+export const DeleteAdminManagerUser = (uid: number): MsgBack<null> => request({
+    url: "/admin/user/" + uid,
+    method: "delete",
+})
+
+// ===
+// 【管理】仪表盘
+// ===
+// 获取仪表盘数据
+export const GetAdminPanelBase = (): MsgBack<HTTPAdminPanelBaseGet> => request({
+    url: "/admin/panel/base",
+    method: "get",
+})
+// 获取对话趋势
+export const GetAdminPanelChat = (start: string, end: string): MsgBack<Array<HTTPAdminPanelChatGet>> => request({
+    url: "/admin/panel/chat",
+    method: "get",
+    params: {
+        start,
+        end,
+    }
+})
+// 获取Token趋势
+export const GetAdminPanelToken = (start: string, end: string): MsgBack<Array<HTTPAdminPanelChatGet>> => request({
+    url: "/admin/panel/token",
+    method: "get",
+    params: {
+        start,
+        end,    
     }
 })

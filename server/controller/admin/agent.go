@@ -304,7 +304,7 @@ func PutAdminAgent(ctx *gin.Context) {
 		Operate: "用户操作",
 		Uid:     result.UID,
 		Job:     "更新智能体",
-		Content: fmt.Sprintf("删除智能体ID：%s", "id"),
+		Content: fmt.Sprintf("删除智能体ID：%s", id),
 	}).Set()
 
 	// 返回数据

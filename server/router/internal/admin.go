@@ -77,10 +77,20 @@ func Admin(group *gin.RouterGroup, path string) {
 		r.PUT("/agent", admin.PutAdminAgent)
 
 		// ===
-		// TODO 对话
+		// 对话
 		// ===
 		// 获取对话历史记录
 		r.GET("/chat/history", admin.GetAdminChatHistory)
+		// 删除对话历史记录
+		r.DELETE("/chat/history", admin.DeleteAdminChatHistory)
+		// 获取智能体记录
+		r.GET("/chat/agent", admin.GetAdminChatAgent)
+		// 删除智能体历史记录
+		r.DELETE("/chat/agent", admin.DeleteAdminChatAgent)
+		// 获取擂台记录
+		r.GET("/chat/pk", admin.GetAdminChatPk)
+		// 删除擂台历史记录
+		r.DELETE("/chat/pk", admin.DeleteAdminChatPk)
 
 		// ===
 		// 系统设置
@@ -97,5 +107,21 @@ func Admin(group *gin.RouterGroup, path string) {
 		// ===
 		// 用户管理
 		// ===
+		// 获取用户信息列表
+		r.GET("/user", admin.GetAdminUserinfoList)
+		// 更新用户信息
+		r.PUT("/user", admin.UpdateAdminUserinfoList)
+		// 删除用户信息
+		r.DELETE("/user/:id", admin.DeleteAdminUserinfoList)
+
+		// ===
+		// 仪表盘
+		// ===
+		// 获取基础数据
+		r.GET("/panel/base", admin.GetAdminPanelBase)
+		// 获取对话趋势
+		r.GET("/panel/chat", admin.GetAdminPanelChat)
+		// 获取Token趋势
+		r.GET("/panel/token", admin.GetAdminPanelToken)
 	}
 }

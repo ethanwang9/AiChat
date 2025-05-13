@@ -101,6 +101,33 @@ export interface HTTPAdminChatHistoryGet {
     total: number;
 }
 
+export interface HTTPAdminChatAgentGet {
+    agent: Array<{
+        id: string;
+        uid: number;
+        aid: number;
+        question: string;
+        answer: string;
+        created_at: string;
+    }>;
+    total: number;
+}
+
+export interface HTTPAdminChatPkGet {
+    pk: Array<{
+        id: string;
+        uid: number;
+        mid1: number;
+        mid2: number;
+        question: string;
+        answer1: string;
+        answer2: string;
+        created_at: string;
+    }>;
+    total: number;
+}
+
+
 export interface HTTPAdminSystemConfigGet {
     logo: string;
     name: string;
@@ -111,5 +138,31 @@ export interface HTTPAdminSystemConfigGet {
 export interface HTTPAdminSystemAuthGet {
     appid: string;
     key: string;
+}
+
+export interface HTTPAdminUserListGet {
+    user: Array<{
+        uid: number;
+        name: string;
+        mail: string;
+        phone: string;
+        avatar: string;
+        status: string;
+        role: string;
+        created_at: string;
+    }>;
+    total: number;
+}
+
+export interface HTTPAdminPanelBaseGet {
+    today_chat: number;
+    today_token: number;
+    token: number;
+    user: number;
+}
+
+export interface HTTPAdminPanelChatGet {
+    date: string,
+    value: number,
 }
 

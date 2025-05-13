@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { Button, message, Modal, Space, Table, TableProps } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EyeOutlined } from "@ant-design/icons";
 import { useMount, useRequest } from "ahooks";
 import { GetAdminLog, DeleteAdminLog } from "@/apis/admin.ts";
 import { formatDate } from "@/utils/tools.ts";
