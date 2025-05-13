@@ -5,7 +5,8 @@ import {
     HTTPAdminManagerLogGet, HTTPAdminManagerModelChannelGet, HTTPAdminManagerModelListGet,
     HTTPAdminUserinfo,
     HTTPAdminChatHistoryGet,
-    HTTPAdminSystemConfigGet
+    HTTPAdminSystemConfigGet,
+    HTTPAdminSystemAuthGet
 } from '@/types/http/admin';
 import { MsgBack } from '@/types/msgBack';
 import request from '@/utils/request';
@@ -290,3 +291,17 @@ export const UpdateAdminSystemConfig = (name: string, gov: string, icp: string, 
         data: formData,
     })
 }
+// 获取系统登录配置信息
+export const GetAdminSystemAuth = (): MsgBack<HTTPAdminSystemAuthGet> => request({
+    url: "/admin/system/auth",
+    method: "get",
+})
+// 保存系统登录配置信息
+export const UpdateAdminSystemAuth = (appid: string, key: string): MsgBack<null> => request({
+    url: "/admin/system/auth",
+    method: "put",
+    data: {
+        appid,
+        key,
+    }
+})

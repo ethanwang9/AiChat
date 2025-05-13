@@ -157,7 +157,7 @@ func GetChatChat(ctx *gin.Context) {
 		// 消息结束
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
-			// TODO 对话记录写入数据库
+			// 可以做一些其他的业务
 			return
 		}
 

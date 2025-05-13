@@ -87,7 +87,15 @@ func Admin(group *gin.RouterGroup, path string) {
 		// ===
 		// 获取系统配置
 		r.GET("/system/config", admin.GetAdminSystemConfig)
-		// TODO 更新系统配置
+		// 更新系统配置
 		r.PUT("/system/config", admin.UpdateAdminSystemConfig)
+		// 获取系统登录配置
+		r.GET("/system/auth", admin.GetAdminSystemAuth)
+		// 更新系统登录配置
+		r.PUT("/system/auth", admin.UpdateAdminSystemAuth)
+
+		// ===
+		// 用户管理
+		// ===
 	}
 }

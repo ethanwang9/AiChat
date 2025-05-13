@@ -108,3 +108,8 @@ export interface HTTPAdminSystemConfigGet {
     icp: string;
 }
 
+export interface HTTPAdminSystemAuthGet {
+    appid: string;
+    key: string;
+}
+

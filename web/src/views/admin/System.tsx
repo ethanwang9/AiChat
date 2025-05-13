@@ -1,9 +1,9 @@
 import {FC, useState, useRef} from "react";
 import {Tabs, Input, Button, Upload, message, Form, Spin} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import {GetAdminSystemConfig, UpdateAdminSystemConfig} from "@/apis/admin";
+import {GetAdminSystemConfig, UpdateAdminSystemConfig, GetAdminSystemAuth, UpdateAdminSystemAuth} from "@/apis/admin";
 import {useMount, useRequest} from "ahooks";
-import {HTTPAdminSystemConfigGet} from "@/types/http/admin";
+import {HTTPAdminSystemConfigGet, HTTPAdminSystemAuthGet} from "@/types/http/admin";
 import type { RcFile } from 'antd/es/upload/interface';
 
 const System: FC = () => {
@@ -35,6 +35,25 @@ const System: FC = () => {
         }
     );
 
+    // 获取登录配置信息
+    const {loading: authLoading, run: fetchAuthConfig} = useRequest(
+        () => GetAdminSystemAuth(),
+        {
+            manual: true,
+            onSuccess: (response) => {
+                const result = response as unknown as HTTPAdminSystemAuthGet;
+                // 更新表单数据
+                authForm.setFieldsValue({
+                    appId: result.appid,
+                    key: result.key
+                });
+            },
+            onError: () => {
+                message.error("获取登录配置失败");
+            }
+        }
+    );
+
     // 保存系统配置信息
     const {loading: savingConfig, run: saveSystemConfig} = useRequest(
         (name: string, gov: string, icp: string, logo: File | null) => 
@@ -52,9 +71,27 @@ const System: FC = () => {
         }
     );
 
+    // 保存登录配置信息
+    const {loading: savingAuthConfig, run: saveAuthConfig} = useRequest(
+        (appid: string, key: string) => 
+            UpdateAdminSystemAuth(appid, key),
+        {
+            manual: true,
+            onSuccess: () => {
+                message.success("登录配置保存成功");
+                // 重新获取最新配置
+                fetchAuthConfig();
+            },
+            onError: () => {
+                message.error("登录配置保存失败");
+            }
+        }
+    );
+
     // 组件挂载时获取系统配置
     useMount(() => {
         fetchSystemConfig();
+        fetchAuthConfig();
     });
 
     const handleSystemSave = async () => {
@@ -74,8 +111,7 @@ const System: FC = () => {
     const handleAuthSave = async () => {
         try {
             const values = await authForm.validateFields();
-            console.log('Login form values:', values);
-            message.success("登录配置保存成功");
+            saveAuthConfig(values.appId, values.key);
         } catch (error) {
             console.error('Validation failed:', error);
         }
@@ -170,36 +206,43 @@ const System: FC = () => {
             key: "oauth",
             label: "登录配置",
             children: (
-                <Form
-                    form={authForm}
-                    layout="vertical"
-                    className="max-w-xl"
-                    initialValues={{
-                        apiEndpoint: "",
-                        appId: "",
-                        key: ""
-                    }}
-                >
-                    <Form.Item
-                        label="APPID"
-                        name="appId"
-                        rules={[{required: true, message: '请输入APPID'}]}
+                <Spin spinning={authLoading}>
+                    <Form
+                        form={authForm}
+                        layout="vertical"
+                        className="max-w-xl"
+                        initialValues={{
+                            appId: "",
+                            key: ""
+                        }}
                     >
-                        <Input placeholder="请输入APPID"/>
-                    </Form.Item>
+                        <Form.Item
+                            label="APPID"
+                            name="appId"
+                            rules={[{required: true, message: '请输入APPID'}]}
+                        >
+                            <Input placeholder="请输入APPID"/>
+                        </Form.Item>
 
-                    <Form.Item
-                        label="KEY"
-                        name="key"
-                        rules={[{required: true, message: '请输入KEY'}]}
-                    >
-                        <Input placeholder="请输入KEY"/>
-                    </Form.Item>
+                        <Form.Item
+                            label="KEY"
+                            name="key"
+                            rules={[{required: true, message: '请输入KEY'}]}
+                        >
+                            <Input placeholder="请输入KEY"/>
+                        </Form.Item>
 
-                    <Form.Item>
-                        <Button type="primary" onClick={handleAuthSave}>保存更改</Button>
-                    </Form.Item>
-                </Form>
+                        <Form.Item>
+                            <Button 
+                                type="primary" 
+                                onClick={handleAuthSave}
+                                loading={savingAuthConfig}
+                            >
+                                保存更改
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Spin>
             )
         }
     ];
